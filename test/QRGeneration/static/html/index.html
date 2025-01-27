@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="text" placeholder="Enter text to generate QR code">
+    <button onclick="generateQR()">Generate QR</button>
+    <div id="qr"></div>
+    
+    <!-- <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/lib/browser.min.js"></script> -->
+    <script>
+        function generateQR() {
+            if (!document.getElementById('text').value) {
+                alert('Please enter text to generate QR code');
+                return;
+            }
+            const text = document.getElementById('text').value;
+            fetch(`/generate-qr?text=${encodeURIComponent(text)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const qr = document.getElementById('qr');
+                    qr.innerHTML = `<img src="${data.url}">`;
+                })
+                .catch(error => console.error(error));
+        }
+    </script>
+</body>
+</html>
