@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', async (req, res) => {
     const db = await dbPromise;
-    const home = await db.all('SELECT * FROM Chairs');
+    const home = await db.all('SELECT * FROM Chair');
     res.render('home', { 
         title: 'Home',
         home
