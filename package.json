@@ -2,16 +2,25 @@
   "name": "guidance-system",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuan-miranda/guidance-system.git"
+  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yuan-miranda/guidance-system/issues"
+  },
+  "homepage": "https://github.com/yuan-miranda/guidance-system#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "express-handlebars": "^6.0.1"
+    "bootstrap": "^5.3.3",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "jquery": "^3.7.1"
   }
 }
