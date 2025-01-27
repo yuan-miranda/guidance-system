@@ -6,8 +6,12 @@ const app = express();
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 
+// app.use(express.urlencoded());
+
 app.get('/', (req, res) => {
-    res.render('home', { title: 'Home' });
+    res.render('home', { 
+        title: 'Home' 
+    });
 });
 
 app.listen(3000, () => {
