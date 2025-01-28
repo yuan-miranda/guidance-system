@@ -33,14 +33,6 @@ app.get('/', async (req, res) => {
     });
 });
 
-app.get('/login_page', (req, res) => {
-    res.render('login_page', 
-        { 
-            title: 'Log In',
-            css: 'css/login.css'
-        });
-});
-
 const setup = async () => {
     const db = await dbPromise;
     await db.migrate({ migrationsPath: join(__dirname, 'migrations') });
