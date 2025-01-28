@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', async (req, res) => {  
     const db = await dbPromise;
-    const home = await db.all('SELECT * FROM Chair');
+    const home = await db.all('SELECT * FROM Student_Data');
     res.render('home', { 
         title: 'Home',
         css: 'css/home.css',
