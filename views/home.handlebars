@@ -1,16 +1,34 @@
 <p id="toChange">test</p>
-{{#each home}}
- <div>
-    <p>{{date}}</p>
-    <p>{{student_id}}</p>
-    <p>{{level}}</p>
-    <p>{{program}}</p>
-    <p>{{guidance_service_availed}}</p>
-    <p>{{contact_type}}</p>
-    <p>{{nature_of_concern}}</p>
-    <p>{{concern}}</p>
-    <p>{{status}}</p>
-    <p>{{intervention}}</p>
-    <p>{{remarks}}</p>
- </div>
-{{/each}}
+
+<table>
+   <tr>
+         <th>Date</th>
+        <th>Student #</th>
+        <th>Level</th>
+        <th>Program</th>
+        <th>Guidance Service Availed</th>
+        <th>Contact Type</th>
+        <th>Nature Of Concern</th>
+        <th>Specific Concern</th>
+        <th>Concern</th>
+        <th>Intervention</th>
+        <th>Status</th>
+        <th>Remarks</th>
+   </tr>
+   {{#each home}}
+   <tr>
+        <td>{{date}}</td>
+        <td>{{student_id}}</td>
+        <td>{{level}}</td>
+        <td>{{program}}</td>
+        <td>{{guidance_service_availed}}</td>
+        <td>{{contact_type}}</td>
+        <td>{{nature_of_concern}}</td>
+        <td>{{specific_concern}}</td>
+        <td>{{concern}}</td>
+        <td>{{intervention}}</td>
+        <td>{{status}}</td>
+        <td>{{remarks}}</td>
+   </tr>
+   {{/each}}
+</table>

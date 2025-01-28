@@ -1,3 +1,23 @@
-body {
-    background-color: red;
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    color: rgb(0, 153, 255);
+}
+
+th {
+    background-color: #ffd905;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #ddd;
 }

@@ -7,6 +7,7 @@ CREATE TABLE Chair (
     guidance_service_availed STRING,
     contact_type STRING,
     nature_of_concern STRING,
+    specific_concern STRING,
     concern STRING,
     status STRING,
     intervention STRING,
