@@ -28,8 +28,17 @@ app.get('/', async (req, res) => {
     res.render('home', { 
         title: 'Home',
         css: 'css/home.css',
+        script: 'js/home.js',
         home
     });
+});
+
+app.get('/login_page', (req, res) => {
+    res.render('login_page', 
+        { 
+            title: 'Log In',
+            css: 'css/login.css'
+        });
 });
 
 const setup = async () => {
