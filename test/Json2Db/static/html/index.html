@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .upload {
+            outline: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload">
+        <h3>Upload .xlsx file and put it on database</h3>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".xls, .xlsx">
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <script>
+    </script>
+</body>
+</html>

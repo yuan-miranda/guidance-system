@@ -1,0 +1,5 @@
+-- Up
+CREATE TABLE Example (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
