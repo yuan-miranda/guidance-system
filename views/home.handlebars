@@ -1,34 +1,37 @@
-<p id="toChange">test</p>
-
+<input type="text" id="searchBar" placeholder="Search..." onkeyup="filterHome()">
 <table>
-   <tr>
-         <th>Date</th>
-        <th>Student #</th>
-        <th>Level</th>
-        <th>Program</th>
-        <th>Guidance Service Availed</th>
-        <th>Contact Type</th>
-        <th>Nature Of Concern</th>
-        <th>Specific Concern</th>
-        <th>Concern</th>
-        <th>Intervention</th>
-        <th>Status</th>
-        <th>Remarks</th>
-   </tr>
-   {{#each home}}
-   <tr>
-        <td>{{date}}</td>
-        <td>{{student_id}}</td>
-        <td>{{level}}</td>
-        <td>{{program}}</td>
-        <td>{{guidance_service_availed}}</td>
-        <td>{{contact_type}}</td>
-        <td>{{nature_of_concern}}</td>
-        <td>{{specific_concern}}</td>
-        <td>{{concern}}</td>
-        <td>{{intervention}}</td>
-        <td>{{status}}</td>
-        <td>{{remarks}}</td>
-   </tr>
-   {{/each}}
+   <thead>
+       <tr>
+           <th>Date</th>
+           <th>Student #</th>
+           <th>Level</th>
+           <th>Program</th>
+           <th>Guidance Service Availed</th>
+           <th>Contact Type</th>
+           <th>Nature Of Concern</th>
+           <th>Specific Concern</th>
+           <th>Concern</th>
+           <th>Intervention</th>
+           <th>Status</th>
+           <th>Remarks</th>
+       </tr>
+   </thead>
+   <tbody id="tableBody">
+       {{#each home}}
+       <tr>
+           <td>{{date}}</td>
+           <td>{{student_id}}</td>
+           <td>{{level}}</td>
+           <td>{{program}}</td>
+           <td>{{guidance_service_availed}}</td>
+           <td>{{contact_type}}</td>
+           <td>{{nature_of_concern}}</td>
+           <td>{{specific_concern}}</td>
+           <td>{{concern}}</td>
+           <td>{{intervention}}</td>
+           <td>{{status}}</td>
+           <td>{{remarks}}</td>
+       </tr>
+       {{/each}}
+   </tbody>
 </table>

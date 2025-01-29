@@ -24,13 +24,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', async (req, res) => {  
     const db = await dbPromise;
-    const home = await db.all('SELECT * FROM Chair');
+    const home = await db.all('SELECT * FROM StudentData');
     res.render('home', { 
         title: 'Home',
         css: 'css/home.css',
         script: 'js/home.js',
         home
     });
+});
+
+app.get('/searchStudentData', async (req, res) => {
+    const { q } = req.query;
+    const db = await dbPromise;
+    const data = await db.all(
+        'SELECT * FROM StudentData WHERE student_id LIKE ?', [`%${q}%`]);
+    res.json(data);
 });
 
 const setup = async () => {

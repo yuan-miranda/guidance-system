@@ -1,5 +1,5 @@
 -- Up
-CREATE TABLE Chair (
+CREATE TABLE StudentData (
     date STRING,
     student_id STRING,
     level STRING,
