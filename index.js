@@ -37,7 +37,21 @@ app.get('/searchStudentData', async (req, res) => {
     const { q } = req.query;
     const db = await dbPromise;
     const data = await db.all(
-        'SELECT * FROM StudentData WHERE student_id LIKE ?', [`%${q}%`]);
+        `SELECT * FROM StudentData 
+         WHERE date LIKE ?
+         OR student_id LIKE ?
+         OR level LIKE ?
+         OR program LIKE ?
+         OR guidance_service_availed LIKE ?
+         OR contact_type LIKE ?
+         OR nature_of_concern LIKE ?
+         OR specific_concern LIKE ?
+         OR concern LIKE ?
+         OR status LIKE ?
+         OR intervention LIKE ?
+         OR remarks LIKE ?`,
+        [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`]
+    );
     res.json(data);
 });
 
