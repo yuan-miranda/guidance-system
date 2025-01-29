@@ -50,7 +50,7 @@ app.get('/searchStudentData', async (req, res) => {
          OR status LIKE ?
          OR intervention LIKE ?
          OR remarks LIKE ?`,
-        [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`], [`%${q}%`]
+        Array(12).fill(`%${q}%`)
     );
     res.json(data);
 });
