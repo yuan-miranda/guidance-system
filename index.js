@@ -6,9 +6,12 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
+const port = 3000;
+
 const dbPromise = open({
     filename: './database.db',
     driver: sqlite3.Database
@@ -55,12 +58,8 @@ app.get('/searchStudentData', async (req, res) => {
     res.json(data);
 });
 
-const setup = async () => {
+app.listen(port, async () => {
+    console.log(`Server is running on http://localhost:${port}`);
     const db = await dbPromise;
     await db.migrate({ migrationsPath: join(__dirname, 'migrations') });
-    app.listen(3000, () => {
-        console.log('Server is running on http://localhost:3000');
-    });
-};
-
-setup();
+});
