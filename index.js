@@ -33,6 +33,14 @@ app.get('/', async (req, res) => {
     });
 });
 
+app.get('/searchStudentData', async (req, res) => {
+    const { q } = req.query;
+    const db = await dbPromise;
+    const data = await db.all(
+        'SELECT * FROM Chair WHERE student_id LIKE ?', [`%${q}%`]);
+    res.json(data);
+});
+
 const setup = async () => {
     const db = await dbPromise;
     await db.migrate({ migrationsPath: join(__dirname, 'migrations') });
