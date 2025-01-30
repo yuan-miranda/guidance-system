@@ -13,3 +13,4 @@ CREATE TABLE StudentData (
     intervention STRING,
     remarks STRING
 );
+
