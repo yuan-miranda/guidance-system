@@ -5,14 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        .upload,
+        .convert {
+            outline: 1px solid black;
+            padding: 10px;
+        }
+        .convert {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".xls, .xlsx">
-        <button type="submit">Upload</button>
-    </form>
+    <div class="upload">
+        <h3>Upload .xlsx file and convert it into JSON</h3>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".xls, .xlsx">
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <div class="convert">
+        <h3>Convert JSON text to .xlsx file</h3>
+        <form id="jsonForm">
+            <textarea name="json" id="jsonInput" cols="30" rows="10"></textarea>
+            <button type="submit">Convert</button>
+        </form>
+    </div>
     <script>
+        function jsonFormSubmitListener() {
+            const form = document.getElementById('jsonForm');
+            form.addEventListener('submit', async (event)  => {
+                event.preventDefault();
+                const jsonFormInput = document.getElementById('jsonInput').value;
+                try {
+                    const response = await fetch("/convert", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: jsonFormInput
+                    });
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'converted.xlsx';
+                        a.click();
+                        a.remove();
+                    } else {
+                        throw new Error('Failed to convert JSON to .xlsx');
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        }
+        jsonFormSubmitListener();
     </script>
 </body>
 </html>

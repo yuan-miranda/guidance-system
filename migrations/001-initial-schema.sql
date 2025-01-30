@@ -1,5 +1,5 @@
 -- Up
-CREATE TABLE Student_Data (
+CREATE TABLE StudentData (
     date STRING,
     student_id STRING,
     level STRING,

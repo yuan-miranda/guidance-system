@@ -32,7 +32,6 @@ app.get('/', (req, res) => {
 
 app.post("/upload", upload.single("file"), (req, res) => {
     if (!req.file) return res.status(400).send("Please upload a file");
-
     try {
         const filePath = path.resolve(req.file.path);
         
@@ -50,7 +49,25 @@ app.post("/upload", upload.single("file"), (req, res) => {
     }
 });
 
+app.post("/convert", express.json(), (req, res) => {
+    if (!req.body || !Array.isArray(req.body)) return res.status(400).send("Please provide JSON data");
+    try {
+        const data = req.body;
+        const worksheet = xlsx.utils.json_to_sheet(data);
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
+        const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+        fs.writeFileSync(path.join(__dirname, 'uploads', `${Date.now()}-converted.xlsx`), fileBuffer);
+
+        res.setHeader("Content-Disposition", "attachment; filename=converted.xlsx");
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.send(fileBuffer);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 app.listen(port, () => {
     console.log(`app listening at http://localhost:${port}`);
