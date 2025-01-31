@@ -58,6 +58,10 @@ app.get('/searchStudentData', async (req, res) => {
     res.json(data);
 });
 
+app.get('/login', (req, res) => {
+    res.render('login', { title: 'Login', css: 'css/login.css', script: 'js/login.js' });
+});
+
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);
     const db = await dbPromise;
