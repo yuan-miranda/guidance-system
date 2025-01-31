@@ -1,20 +1,34 @@
--- https://go.microsoft.com/fwlink/?LinkID=521962
-CREATE TABLE FinancialSample (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    segment TEXT NOT NULL,
-    country TEXT NOT NULL,
-    product TEXT NOT NULL,
-    discount_band TEXT NOT NULL,
-    units_sold REAL NOT NULL,
-    manufacturing_price REAL NOT NULL,
-    sale_price REAL NOT NULL,
-    gross_sales REAL NOT NULL,
-    discounts REAL NOT NULL,
-    sales REAL NOT NULL,
-    cogs REAL NOT NULL,
-    profit REAL NOT NULL,
-    date TEXT NOT NULL,
-    month_number INTEGER NOT NULL,
-    month_name TEXT NOT NULL,
-    year INTEGER NOT NULL
+CREATE TABLE CounselingSchema (
+    date STRING,
+    student_id STRING,
+
+    -- academic
+    level STRING,
+    program STRING,
+
+    guidance_service_availed STRING,
+    contact_type STRING,
+    nature_of_concern STRING,
+    specific_concern STRING,
+
+    -- session summary
+    concern STRING,
+    intervention STRING,
+    status STRING,
+    remarks STRING
+);
+
+CREATE TABLE InformationSchema (
+    date STRING,
+
+    -- academic
+    level STRING,
+    program STRING,
+
+    seminar_workshop_title STRING,
+
+    -- links
+    evaluation_result STRING,
+    documentation STRING,
+    fb_page_post STRING
 );

@@ -59,33 +59,47 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const sheetName = workbook.SheetNames[0];
         var sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-        // clean json data
+        // CounselingSchema
         sheetData = sheetData.map((row) => {
             return {
-                segment: row["Segment"],
-                county: row["Country"],
-                product: row[" Product "]?.trim(),
-                discount_band: row[" Discount Band "]?.trim(),
-                units_sold: parseFloat(row["Units Sold"]),
-                manufacturing_price: parseFloat(row[" Manufacturing Price "]),
-                sale_price: parseFloat(row[" Sale Price "]),
-                gross_sales: parseFloat(row[" Gross Sales "]),
-                discounts: parseFloat(row[" Discounts "]),
-                sales: parseFloat(row["  Sales "]),
-                cogs: parseFloat(row[" COGS "]),
-                profit: parseFloat(row[" Profit "]),
                 date: getJsDateFromExcel(row["Date"]),
-                month_number: parseInt(row["Month Number"]),
-                month_name: row[" Month Name "]?.trim(),
-                year: parseInt(row["Year"])
+                student_id: row["Student #"],
+                level: row["Level"],
+                program: row["Program"],
+                guidance_service_availed: row["Guidance Service Availed"],
+                contact_type: row["Contact Type"],
+                nature_of_concern: row["Nature of Concern"],
+                specific_concern: row["Specific Concern"],
+                concern: row["Concern"],
+                intervention: row["Intervention"],
+                status: row["Status"],
+                remarks: row["Remarks"]
             }
         });
 
-        // insert data to db
-        const query = `
-            INSERT INTO FinancialSample (
-                segment, country, product, discount_band, units_sold, manufacturing_price, sale_price, gross_sales, discounts, sales, cogs, profit, date, month_number, month_name, year
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        const queryCounselingSchema = `
+            INSERT INTO CounselingSchema (
+                date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+
+        // InformationSchema
+        sheetData = sheetData.map((row) => {
+            return {
+                date: getJsDateFromExcel(row["Date"]),
+                level: row["Level"],
+                program: row["Program"],
+                seminar_workshop_title: row["Seminar/Workshop Title"],
+                evaluation_result: row["Evaluation Result"],
+                documentation: row["Documentation"],
+                fb_page_post: row["FB Page Post"]
+            }
+        });
+
+        const queryInformationSchema = `
+            INSERT INTO InformationSchema (
+                date, level, program, seminar_workshop_title, evaluation_result, documentation, fb_page_post
+            ) VALUES (?, ?, ?, ?, ?, ?, ?);
         `;
         
         // query db
