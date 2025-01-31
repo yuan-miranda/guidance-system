@@ -1,4 +1,4 @@
--- Up
+-- https://go.microsoft.com/fwlink/?LinkID=521962
 CREATE TABLE FinancialSample (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     segment TEXT NOT NULL,
