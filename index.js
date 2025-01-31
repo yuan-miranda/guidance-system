@@ -74,18 +74,26 @@ app.get('/qrgen', (req, res) => {
 
 app.get("/generate-qr", (req, res) => {
     const data = req.query.text;
-    const url = `https://example.com/${data}`;
+    if (!data) {
+        return res.status(400).send("Text query parameter is required");
+    }
 
-    qrcode.toFile(`public/cdn/qr/${data}.png`, url, {
+    const sanitizedData = data.replace(/[\/\\?%*:|"<>]/g, '-');
+    const url = data;
+
+    qrcode.toFile(`public/cdn/qr/${sanitizedData}.png`, url, {
         color: {
-            dark: '#000000',
-            light: '#ffffff'
+            dark: '#000',
+            light: '#fff'
         },
         width: 500,
         margin: 2
-    }, (err, url) => {
-        if (err) return res.status(500).send("Error generating QR code");
-        res.json({ message: "QR code generated", url: `qr/${data}.png` });
+    }, (err) => {
+        if (err) {
+            console.error("Error generating QR code:", err);
+            return res.status(500).send("Error generating QR code");
+        }
+        res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
     });
 });
 
