@@ -50,18 +50,18 @@ function filterHome() {
                 data.forEach(item => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${item.date}</td>
-                        <td>${item.student_id}</td>
-                        <td>${item.level}</td>
-                        <td>${item.program}</td>
-                        <td>${item.guidance_service_availed}</td>
-                        <td>${item.contact_type}</td>
-                        <td>${item.nature_of_concern}</td>
-                        <td>${item.specific_concern}</td>
-                        <td>${item.concern}</td>
-                        <td>${item.intervention}</td>
-                        <td>${item.status}</td>
-                        <td>${item.remarks}</td>
+                        <td>${item.date || ''}</td>
+                        <td>${item.student_id || ''}</td>
+                        <td>${item.level || ''}</td>
+                        <td>${item.program || ''}</td>
+                        <td>${item.guidance_service_availed || ''}</td>
+                        <td>${item.contact_type || ''}</td>
+                        <td>${item.nature_of_concern || ''}</td>
+                        <td>${item.specific_concern || ''}</td>
+                        <td>${item.concern || ''}</td>
+                        <td>${item.intervention || ''}</td>
+                        <td>${item.status || ''}</td>
+                        <td>${item.remarks || ''}</td>
                     `;
                     dataTableRow.appendChild(row);
                 });
