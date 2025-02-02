@@ -45,4 +45,34 @@ function filterHome() {
     });
 }
 
-filterHome();
+function addDataModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'block';
+}
+
+function closeModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'none';
+}
+
+
+function addData(event) {
+    event.preventDefault();
+
+    const formData = new FormData(document.getElementById('addDataForm'));
+
+    fetch('/addStudentData', {
+        method: 'POST',
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        closeModal();
+        document.getElementById('addDataForm').reset();
+        filterHome();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}

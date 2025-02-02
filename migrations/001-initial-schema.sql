@@ -9,8 +9,8 @@ CREATE TABLE StudentData (
     nature_of_concern STRING,
     specific_concern STRING,
     concern STRING,
-    status STRING,
     intervention STRING,
+    status STRING,
     remarks STRING
 );
 
