@@ -45,7 +45,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal()">close</span>
         <h2>Add New Data</h2>
-        <form id="addDataForm" onsubmit="addData(event)">
+        <form id="addDataForm" enctype="multipart/form-data" onsubmit="addData(event)">
             <label for="student_id">Student #:</label>
             <input type="text" id="student_id" name="student_id" required>
             <br>

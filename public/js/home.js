@@ -1,3 +1,32 @@
+function addDataModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'block';
+}
+
+function closeModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'none';
+}
+
+function addData(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(document.getElementById('addDataForm'));
+    
+    fetch('/addStudentData', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        closeModal();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
 function filterHome() {
     document.getElementById('searchBar').addEventListener('input', () => {
         const searchInput = document.getElementById('searchBar').value.toLowerCase();
@@ -42,37 +71,5 @@ function filterHome() {
                 const dataTableRow = document.getElementById('tableBody');
                 dataTableRow.innerHTML = '<tr><td colspan="12">Failed to load data. Please try again later.</td></tr>';
             });
-    });
-}
-
-function addDataModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'block';
-}
-
-function closeModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'none';
-}
-
-
-function addData(event) {
-    event.preventDefault();
-
-    const formData = new FormData(document.getElementById('addDataForm'));
-
-    fetch('/addStudentData', {
-        method: 'POST',
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        closeModal();
-        document.getElementById('addDataForm').reset();
-        filterHome();
-    })
-    .catch((error) => {
-        console.error('Error:', error);
     });
 }

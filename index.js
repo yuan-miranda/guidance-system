@@ -6,12 +6,14 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import qrcode from 'qrcode';
+import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const port = 3001
+const upload = multer();
 
 const dbPromise = open({
     filename: './database.db',
@@ -98,7 +100,7 @@ app.get("/generate-qr", (req, res) => {
     });
 });
 
-app.post('/addStudentData', async (req, res) => {
+app.post('/addStudentData', upload.none(), async (req, res) => {
     const { student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks } = req.body;
     const db = await dbPromise;
 
