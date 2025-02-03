@@ -1,16 +1,16 @@
 -- Up
 CREATE TABLE StudentData (
-    date STRING,
-    student_id STRING,
-    level STRING,
-    program STRING,
-    guidance_service_availed STRING,
-    contact_type STRING,
-    nature_of_concern STRING,
-    specific_concern STRING,
-    concern STRING,
-    status STRING,
-    intervention STRING,
-    remarks STRING
+    date TEXT,
+    student_id TEXT,
+    level TEXT,
+    program TEXT,
+    guidance_service_availed TEXT,
+    contact_type TEXT,
+    nature_of_concern TEXT,
+    specific_concern TEXT,
+    concern TEXT,
+    intervention TEXT,
+    status TEXT,
+    remarks TEXT
 );
 
