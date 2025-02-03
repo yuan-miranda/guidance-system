@@ -21,6 +21,7 @@ function addData(event) {
     .then(data => {
         console.log('Success:', data);
         closeModal();
+        window.location.reload();
     })
     .catch((error) => {
         console.error('Error:', error);
