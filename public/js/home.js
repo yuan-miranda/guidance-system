@@ -10,9 +10,9 @@ function closeModal() {
 
 function addData(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(document.getElementById('addDataForm'));
-    
+
     fetch('/addStudentData', {
         method: 'POST',
         body: formData
