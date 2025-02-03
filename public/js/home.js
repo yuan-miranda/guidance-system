@@ -1,13 +1,3 @@
-function addDataModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'block';
-}
-
-function closeModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'none';
-}
-
 function addData(event) {
     event.preventDefault();
 
@@ -20,7 +10,6 @@ function addData(event) {
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        closeModal();
         window.location.reload();
     })
     .catch((error) => {
@@ -42,7 +31,7 @@ function filterHome() {
             .then(data => {
                 const dataTableRow = document.getElementById('tableBody');
                 dataTableRow.innerHTML = '';
-    
+                
                 if (data.length === 0) {
                     dataTableRow.innerHTML = '<tr><td colspan="12" id="notFound">No data found.</td></tr>';
                     return;
@@ -73,4 +62,14 @@ function filterHome() {
                 dataTableRow.innerHTML = '<tr><td colspan="12">Failed to load data. Please try again later.</td></tr>';
             });
     });
+}
+
+function addDataModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'block';
+}
+
+function closeAddModal() {
+    const modal = document.getElementById('addDataModal');
+    modal.style.display = 'none';
 }
