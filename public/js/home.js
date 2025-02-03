@@ -3,7 +3,7 @@ function addDataModal() {
     modal.style.display = 'block';
 }
 
-function closeModal() {
+function closeAddModal() {
     const modal = document.getElementById('addDataModal');
     modal.style.display = 'none';
 }
@@ -20,7 +20,7 @@ function addData(event) {
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        closeModal();
+        closeAddModal();
     })
     .catch((error) => {
         console.error('Error:', error);

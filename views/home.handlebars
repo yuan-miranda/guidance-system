@@ -1,4 +1,4 @@
-<input type="text" id="searchBar" placeholder="Search..." onkeyup="filterHome()">
+<input type="text" id="searchBar" placeholder="Search..." onkeypress="filterHome()">
 <table>
    <thead>
        <tr>
@@ -35,15 +35,14 @@
        {{/each}}
    </tbody>
    <div>
-    <button onclick="addDataModal()">
-        +
-    </button>
+    <button onclick="addDataModal()">add</button>
+    <button>filterHome()</button>
    </div>
 </table>
 
 <div id="addDataModal" class="addDataModal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">close</span>
+        <span class="close" onclick="closeAddModal()">close</span>
         <h2>Add New Data</h2>
         <form id="addDataForm" enctype="multipart/form-data" onsubmit="addData(event)">
             <label for="student_id">Student #:</label>
