@@ -6,12 +6,14 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import qrcode from 'qrcode';
+import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = 3000;
+const port = 3001
+const upload = multer();
 
 const dbPromise = open({
     filename: './database.db',
@@ -25,6 +27,7 @@ app.set('views', join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
+app.use(express.json());
 
 
 app.get('/', async (req, res) => {  
@@ -95,6 +98,19 @@ app.get("/generate-qr", (req, res) => {
         }
         res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
     });
+});
+
+app.post('/addStudentData', upload.none(), async (req, res) => {
+    const { student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks } = req.body;
+    const db = await dbPromise;
+
+    const date = new Date().toISOString().split('T')[0];
+    await db.run(`
+        INSERT INTO StudentData (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
+    // console.log(req.body);
+    res.json({ message: 'Data added successfully' });
 });
 
 app.listen(port, async () => {
