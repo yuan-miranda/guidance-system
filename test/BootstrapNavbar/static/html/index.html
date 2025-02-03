@@ -12,7 +12,7 @@
     <!-- https://getbootstrap.com/docs/5.3/examples/navbars/ -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Expand at md</a>
+            <a class="navbar-brand" href="/">Guidance System</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
                 aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -40,12 +40,21 @@
                     </li>
                 </ul>
                 <form role="search">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                    <input class="form-control" type="search" placeholder="Search (CTRL K)" aria-label="Search">
                 </form>
             </div>
         </div>
     </nav>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function searcKeyShortcut(event) {
+            if (event.ctrlKey && event.key === 'k') {
+                event.preventDefault();
+                document.querySelector('input[type="search"]').focus();
+            }
+        }
+        document.addEventListener('keydown', searcKeyShortcut);
+    </script>
 </body>
 
 </html>
