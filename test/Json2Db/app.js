@@ -1,7 +1,6 @@
 import express from 'express';
-import { join } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
@@ -33,7 +32,6 @@ const dbPromise = open({
 
 
 app.use(express.static(join(__dirname, 'static')));
-app.use("/node_modules", express.static("node_modules"));
 
 app.get('/', (req, res) => {
     res.sendFile("static/html/index.html", { root: __dirname });
