@@ -10,9 +10,9 @@ function closeModal() {
 
 function addData(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(document.getElementById('addDataForm'));
-    
+
     fetch('/addStudentData', {
         method: 'POST',
         body: formData
@@ -21,6 +21,7 @@ function addData(event) {
     .then(data => {
         console.log('Success:', data);
         closeModal();
+        window.location.reload();
     })
     .catch((error) => {
         console.error('Error:', error);
