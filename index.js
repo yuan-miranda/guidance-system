@@ -12,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const port = 3001
+const port = 3000
 const upload = multer();
 
 const dbPromise = open({
