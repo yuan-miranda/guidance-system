@@ -65,19 +65,26 @@ function filterHome() {
 }
 
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && document.getElementById('addDataModal').style.display === 'block') {
         closeAddModal();
+    }
+    if (event.key === 'Escape' && document.getElementById('qrScannerModal').style.display === 'block') {
+        closeQrScannerModal();
     }
 });
 
-function addDataModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'block';
+function openAddModal() {
+    document.getElementById('addDataModal').style.display = 'block';
+}
+function closeAddModal() {
+    document.getElementById('addDataModal').style.display = 'none';
 }
 
-function closeAddModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'none';
+function openQrScannerModal() {
+    document.getElementById('qrScannerModal').style.display = 'block';
+}
+function closeQrScannerModal() {
+    document.getElementById('qrScannerModal').style.display = 'none';
 }
 
 function keyEventListener(event) {
