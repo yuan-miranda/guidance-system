@@ -64,6 +64,12 @@ function filterHome() {
     });
 }
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeAddModal();
+    }
+});
+
 function addDataModal() {
     const modal = document.getElementById('addDataModal');
     modal.style.display = 'block';
