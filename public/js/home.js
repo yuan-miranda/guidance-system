@@ -74,13 +74,16 @@ function closeAddModal() {
     modal.style.display = 'none';
 }
 
-function searchKeyShortcut(event) {
+function keyEventListener(event) {
     if (event.ctrlKey && event.key === 'k') {
         event.preventDefault();
         document.querySelector('input[type="search"]').focus();
     }
+    if (event.key === 'Escape') {
+        closeAddModal();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('keydown', searchKeyShortcut);
+    document.addEventListener('keydown', keyEventListener);
 });
