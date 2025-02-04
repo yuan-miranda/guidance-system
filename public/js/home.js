@@ -100,3 +100,13 @@ function keyEventListener(event) {
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', keyEventListener);
 });
+
+function onScanSuccess(decodeText, decodeResult) {
+    window.location.href = decodeText;
+}
+function scanQRCode() {
+    let html5QrCode = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 * 2 }
+    );
+    html5QrCode.render(onScanSuccess);
+}scanQRCode();

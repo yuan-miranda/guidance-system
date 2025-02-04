@@ -92,3 +92,18 @@ tr:hover {
     top: 10px;
     right: 20px;
 }
+
+#reader {
+    padding: 20px !important;
+    border: 1.5px solid black !important;
+}
+#reader img[alt="Info icon"] {
+    display: none;
+}
+#reader img[alt="Camera based scan"] {
+    width: 100px !important;
+    height: 100px !important;
+}
+video {
+    border: 1px solid black !important;
+}
