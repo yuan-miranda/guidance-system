@@ -7,21 +7,21 @@ function addData(event) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        window.location.reload();
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 function filterHome() {
     document.getElementById('searchBar').addEventListener('input', () => {
         const searchInput = document.getElementById('searchBar').value.toLowerCase();
-    
-        fetch(`/searchStudentData?q=${encodeURIComponent(searchInput)}`) 
+
+        fetch(`/searchStudentData?q=${encodeURIComponent(searchInput)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch student data');
@@ -31,12 +31,12 @@ function filterHome() {
             .then(data => {
                 const dataTableRow = document.getElementById('tableBody');
                 dataTableRow.innerHTML = '';
-                
+
                 if (data.length === 0) {
                     dataTableRow.innerHTML = '<tr><td colspan="12" id="notFound">No data found.</td></tr>';
                     return;
                 }
-    
+
                 data.forEach(item => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -73,3 +73,14 @@ function closeAddModal() {
     const modal = document.getElementById('addDataModal');
     modal.style.display = 'none';
 }
+
+function searchKeyShortcut(event) {
+    if (event.ctrlKey && event.key === 'k') {
+        event.preventDefault();
+        document.querySelector('input[type="search"]').focus();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('keydown', searchKeyShortcut);
+});

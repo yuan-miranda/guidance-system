@@ -47,13 +47,13 @@
     </nav>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function searcKeyShortcut(event) {
+        function searchKeyShortcut(event) {
             if (event.ctrlKey && event.key === 'k') {
                 event.preventDefault();
                 document.querySelector('input[type="search"]').focus();
             }
         }
-        document.addEventListener('keydown', searcKeyShortcut);
+        document.addEventListener('keydown', searchKeyShortcut);
     </script>
 </body>
 
