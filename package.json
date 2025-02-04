@@ -20,6 +20,7 @@
   "homepage": "https://github.com/yuan-miranda/guidance-system#readme",
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "esm": "^3.2.25",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",

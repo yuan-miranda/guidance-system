@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    /* overscroll-behavior: none; */
+    user-select: none;
+    height: 100%;
+}
+
+html {
+    /* 1rem = 16px */
+    font-size: 16px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.containerr {
+    flex: auto;
+    /* background-image: url('/background/skibidy.png');
+    background-size: cover;
+    background-repeat: repeat; */
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+}
+
+.custom-navbar {
+    background-color: #0B5793 !important;
+}
+
+/* img {
+    width: 2rem;
+    display: block;
+    cursor: pointer;
+} */
+
+/* Credit: https://stackoverflow.com/a/7354648
+ */
+@media (max-width:320px) {
+    html {
+        font-size: 6px;
+    }
+
+    #colorSizeStatus {
+        background-color: black;
+    }
+
+    .launcher-panel.active {
+        width: 100%;
+    }
+}
+
+@media (min-width:320px) {
+
+    /* smartphones, portrait iPhone, portrait 480x320 phones (Android) */
+    html {
+        font-size: 10px;
+    }
+
+    #colorSizeStatus {
+        background-color: red;
+    }
+}
+
+@media (min-width:480px) {
+
+    /* smartphones, Android phones, landscape iPhone */
+    html {
+        font-size: 12px;
+    }
+
+    #colorSizeStatus {
+        background-color: green;
+    }
+}
+
+@media (min-width:600px) {
+
+    /* portrait tablets, portrait iPad, e-readers (Nook/Kindle), landscape 800x480 phones (Android) */
+    html {
+        font-size: 14px;
+    }
+
+    #colorSizeStatus {
+        background-color: blue;
+    }
+}
+
+@media (min-width:801px) {
+
+    /* tablet, landscape iPad, lo-res laptops ands desktops */
+    html {
+        font-size: 14px;
+    }
+
+    #colorSizeStatus {
+        background-color: yellow;
+    }
+}
+
+@media (min-width:1025px) {
+
+    /* big landscape tablets, laptops, and desktops */
+    html {
+        font-size: 14px;
+    }
+
+    #colorSizeStatus {
+        background-color: orange;
+    }
+}
+
+@media (min-width:1281px) {
+
+    /* hi-res laptops and desktops */
+    html {
+        font-size: 16px;
+    }
+
+    #colorSizeStatus {
+        background-color: purple;
+    }
+}

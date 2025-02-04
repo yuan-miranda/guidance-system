@@ -8,12 +8,22 @@ import path from 'path';
 import qrcode from 'qrcode';
 import multer from 'multer';
 
+const app = express();
+const port = 3000;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const app = express();
-const port = 3000
-const upload = multer();
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        const date = new Date();
+        cb(null, `${date.toISOString().split("T")[0]}-${file.originalname}`);
+    },
+});
+const upload = multer({ storage });
 
 const dbPromise = open({
     filename: './database.db',
@@ -24,54 +34,37 @@ app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', join(__dirname, 'views'));
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
-app.use(express.json());
+app.use("/background", express.static(join(__dirname, 'public/cdn/background')));
 
-
-app.get('/', async (req, res) => {  
+app.get('/', async (req, res) => {
     const db = await dbPromise;
     const home = await db.all('SELECT * FROM StudentData');
-    res.render('home', { 
+    res.render('home', {
         title: 'Home',
-        css: 'css/home.css',
-        script: 'js/home.js',
+        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/home.css'],
+        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'js/home.js'],
         home
     });
 });
 
-app.get('/searchStudentData', async (req, res) => {
-    const { q } = req.query;
-    const db = await dbPromise;
-    const data = await db.all(
-        `SELECT * FROM StudentData 
-         WHERE date LIKE ?
-         OR student_id LIKE ?
-         OR level LIKE ?
-         OR program LIKE ?
-         OR guidance_service_availed LIKE ?
-         OR contact_type LIKE ?
-         OR nature_of_concern LIKE ?
-         OR specific_concern LIKE ?
-         OR concern LIKE ?
-         OR status LIKE ?
-         OR intervention LIKE ?
-         OR remarks LIKE ?`,
-        Array(12).fill(`%${q}%`)
-    );
-    res.json(data);
-});
-
 app.get('/login', (req, res) => {
-    res.render('login', { title: 'Login', css: 'css/login.css', script: 'js/login.js' });
+    res.render('login', {
+        title: 'Login',
+        styles: ['css/login.css'],
+        scripts: ['js/login.js']
+    });
 });
 
 app.get('/qrgen', (req, res) => {
-    res.render('qrgen', { 
+    res.render('qrgen', {
         title: 'QR Code Generator',
-        css: 'css/qrgen.css',
-        script: 'js/qrgen.js'
+        styles: ['css/qrgen.css'],
+        scripts: ['js/qrgen.js']
     });
 });
 
@@ -100,7 +93,7 @@ app.get("/generate-qr", (req, res) => {
     });
 });
 
-app.post('/addStudentData', upload.none(), async (req, res) => {
+app.post('/addStudentData', upload.single("file"), async (req, res) => {
     const { student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks } = req.body;
     const db = await dbPromise;
 
@@ -111,6 +104,28 @@ app.post('/addStudentData', upload.none(), async (req, res) => {
         [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
     // console.log(req.body);
     res.json({ message: 'Data added successfully' });
+});
+
+app.get('/searchStudentData', async (req, res) => {
+    const { q } = req.query;
+    const db = await dbPromise;
+    const data = await db.all(
+        `SELECT * FROM StudentData 
+         WHERE date LIKE ?
+         OR student_id LIKE ?
+         OR level LIKE ?
+         OR program LIKE ?
+         OR guidance_service_availed LIKE ?
+         OR contact_type LIKE ?
+         OR nature_of_concern LIKE ?
+         OR specific_concern LIKE ?
+         OR concern LIKE ?
+         OR status LIKE ?
+         OR intervention LIKE ?
+         OR remarks LIKE ?`,
+        Array(12).fill(`%${q}%`)
+    );
+    res.json(data);
 });
 
 app.listen(port, async () => {
