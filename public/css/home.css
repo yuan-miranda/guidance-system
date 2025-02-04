@@ -9,7 +9,7 @@
     overflow-x: auto;
     white-space: nowrap;
     user-select: text;
-    margin: 0 3px;
+    margin: 5px;
 }
 
 table {
@@ -37,6 +37,16 @@ tr:hover {
     background-color: #ddd;
 }
 
+.qr-code-scan {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 2em;
+    background-color: #0B5793;
+    border-radius: 15%;
+    padding: 8px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.6);
+}
 
 .addDataModal {
     display: none;

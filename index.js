@@ -39,6 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
+app.use("/background", express.static(join(__dirname, 'public/cdn/background')));
 
 app.get('/', async (req, res) => {
     const db = await dbPromise;
