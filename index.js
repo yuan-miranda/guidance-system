@@ -75,7 +75,11 @@ app.get("/generate-qr", (req, res) => {
     }
 
     const sanitizedData = data.replace(/[\/\\?%*:|"<>]/g, '-');
-    const url = data;
+    const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(data)}`
+    console.log(url)
+
+    // console.log(req.protocol)
+    // console.log(req.get('host'))
 
     qrcode.toFile(`public/cdn/qr/${sanitizedData}.png`, url, {
         color: {
@@ -102,7 +106,6 @@ app.post('/addStudentData', upload.single("file"), async (req, res) => {
         INSERT INTO StudentData (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
-    // console.log(req.body);
     res.json({ message: 'Data added successfully' });
 });
 
