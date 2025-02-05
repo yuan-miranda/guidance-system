@@ -21,6 +21,8 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Generate QR</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" onclick="openAddModal()">add</a>
                 </ul>
                 <form role="search">
                     <input class="form-control" id="searchBar" type="search" placeholder="Search (CTRL K)"
@@ -73,7 +75,7 @@
         </div>
         <div class="qr-code-scan">
             {{!-- it should go to qr scan change later --}}
-            <a href="/qrgen">
+            <a onclick="openQrScannerModal()">
                 <img src="/node_modules/bootstrap-icons/icons/qr-code-scan.svg" alt="QR Code Scan"
                     style="width: 2.5em; height: 2.5em; filter: invert(100%);">
             </a>
@@ -81,7 +83,7 @@
     </div>
 </div>
 
-<div id="addDataModal" class="addDataModal">
+<div id="addDataModal" class="add-modal-data">
     <div class="modal-content">
         <span class="close" onclick="closeAddModal()">close</span>
         <h2>Add New Data</h2>
@@ -121,5 +123,16 @@
             <br>
             <button type="submit">Add Data</button>
         </form>
+    </div>
+</div>
+
+<div id="qrScannerModal" class="qr-scanner-modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeQrScannerModal()">close</span>
+        <div class="container">
+            <div class="section">
+                <div id="reader"></div>
+            </div>
+        </div>
     </div>
 </div>

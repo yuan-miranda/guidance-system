@@ -64,14 +64,27 @@ function filterHome() {
     });
 }
 
-function addDataModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'block';
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && document.getElementById('addDataModal').style.display === 'block') {
+        closeAddModal();
+    }
+    if (event.key === 'Escape' && document.getElementById('qrScannerModal').style.display === 'block') {
+        closeQrScannerModal();
+    }
+});
+
+function openAddModal() {
+    document.getElementById('addDataModal').style.display = 'block';
+}
+function closeAddModal() {
+    document.getElementById('addDataModal').style.display = 'none';
 }
 
-function closeAddModal() {
-    const modal = document.getElementById('addDataModal');
-    modal.style.display = 'none';
+function openQrScannerModal() {
+    document.getElementById('qrScannerModal').style.display = 'block';
+}
+function closeQrScannerModal() {
+    document.getElementById('qrScannerModal').style.display = 'none';
 }
 
 function keyEventListener(event) {
@@ -87,3 +100,13 @@ function keyEventListener(event) {
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', keyEventListener);
 });
+
+function onScanSuccess(decodeText, decodeResult) {
+    window.location.href = decodeText;
+}
+function scanQRCode() {
+    let html5QrCode = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 * 2 }
+    );
+    html5QrCode.render(onScanSuccess);
+}scanQRCode();
