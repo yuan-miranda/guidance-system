@@ -1,3 +1,22 @@
+function editableCell(cell) {
+    if (cell.querySelector("input")) return;
+
+    let originalText = cell.innerText;
+    let input = document.createElement("input");
+    input.type = "text";
+    input.value = originalText;
+    input.style.outline = "none";
+    cell.innerHTML = "";
+    cell.appendChild(input);
+    input.focus();
+
+    input.onblur = () => cell.innerHTML = input.value || originalText;
+
+    input.onkeydown = (event) => {
+        if (event.key === "Enter") input.blur();
+    };
+}
+
 function addData(event) {
     event.preventDefault();
 

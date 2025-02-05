@@ -1,7 +1,7 @@
 <header>
     <nav class="navbar navbar-expand-md navbar-dark custom-navbar" aria-label="Fourth navbar example">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">Guidance System</a>
+            <a class="navbar-brand" href="/">Guidance365</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
                 aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -56,18 +56,18 @@
                 <tbody id="tableBody">
                     {{#each home}}
                     <tr>
-                        <td>{{date}}</td>
-                        <td>{{student_id}}</td>
-                        <td>{{level}}</td>
-                        <td>{{program}}</td>
-                        <td>{{guidance_service_availed}}</td>
-                        <td>{{contact_type}}</td>
-                        <td>{{nature_of_concern}}</td>
-                        <td>{{specific_concern}}</td>
-                        <td>{{concern}}</td>
-                        <td>{{intervention}}</td>
-                        <td>{{status}}</td>
-                        <td>{{remarks}}</td>
+                        <td ondblclick="editableCell(this)">{{date}}</td>
+                        <td ondblclick="editableCell(this)">{{student_id}}</td>
+                        <td ondblclick="editableCell(this)">{{level}}</td>
+                        <td ondblclick="editableCell(this)">{{program}}</td>
+                        <td ondblclick="editableCell(this)">{{guidance_service_availed}}</td>
+                        <td ondblclick="editableCell(this)">{{contact_type}}</td>
+                        <td ondblclick="editableCell(this)">{{nature_of_concern}}</td>
+                        <td ondblclick="editableCell(this)">{{specific_concern}}</td>
+                        <td ondblclick="editableCell(this)">{{concern}}</td>
+                        <td ondblclick="editableCell(this)">{{intervention}}</td>
+                        <td ondblclick="editableCell(this)">{{status}}</td>
+                        <td ondblclick="editableCell(this)">{{remarks}}</td>
                     </tr>
                     {{/each}}
                 </tbody>
