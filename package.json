@@ -5,8 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "prestart": "npm update"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
