@@ -64,27 +64,37 @@ function filterHome() {
     });
 }
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && document.getElementById('addDataModal').style.display === 'block') {
-        closeAddModal();
-    }
-    if (event.key === 'Escape' && document.getElementById('qrScannerModal').style.display === 'block') {
-        closeQrScannerModal();
-    }
-});
-
 function openAddModal() {
     document.getElementById('addDataModal').style.display = 'block';
 }
+
 function closeAddModal() {
     document.getElementById('addDataModal').style.display = 'none';
 }
 
 function openQrScannerModal() {
     document.getElementById('qrScannerModal').style.display = 'block';
+    openQRCodeScanner();
 }
+
 function closeQrScannerModal() {
     document.getElementById('qrScannerModal').style.display = 'none';
+    closeQRCodeScanner()
+}
+
+function onScanSuccess(decodeText, decodeResult) {
+    window.location.href = decodeText;
+}
+
+function openQRCodeScanner() {
+    html5QrCode = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 * 2 }
+    );
+    html5QrCode.render(onScanSuccess);
+}
+
+function closeQRCodeScanner() {
+    if (html5QrCode) html5QrCode.clear();
 }
 
 function keyEventListener(event) {
@@ -94,19 +104,12 @@ function keyEventListener(event) {
     }
     if (event.key === 'Escape') {
         closeAddModal();
+        closeQrScannerModal();
     }
 }
+
+let html5QrCode;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', keyEventListener);
 });
-
-function onScanSuccess(decodeText, decodeResult) {
-    window.location.href = decodeText;
-}
-function scanQRCode() {
-    let html5QrCode = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 * 2 }
-    );
-    html5QrCode.render(onScanSuccess);
-}scanQRCode();

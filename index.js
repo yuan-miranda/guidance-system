@@ -47,7 +47,7 @@ app.get('/', async (req, res) => {
     res.render('home', {
         title: 'Home',
         styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/home.css'],
-        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'https://unpkg.com/html5-qrcode', 'js/home.js'],
+        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', '/node_modules/html5-qrcode/html5-qrcode.min.js', 'js/home.js'],
         home
     });
 });
