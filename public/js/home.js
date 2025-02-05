@@ -36,29 +36,30 @@ function addData(event) {
         });
 }
 
-function filterHome() {
-    document.getElementById('searchBar').addEventListener('input', () => {
-        const searchInput = document.getElementById('searchBar').value.toLowerCase();
+function searchStudent(searchQuery = null) {
+    const searchBar = document.getElementById('searchBar');
+    if (searchQuery !== null) searchBar.value = searchQuery;
 
-        fetch(`/searchStudentData?q=${encodeURIComponent(searchInput)}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch student data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const dataTableRow = document.getElementById('tableBody');
-                dataTableRow.innerHTML = '';
+    const searchInput = searchBar.value.trim().toLowerCase();
+    if (!searchInput) return;
 
-                if (data.length === 0) {
-                    dataTableRow.innerHTML = '<tr><td colspan="12" id="notFound">No data found.</td></tr>';
-                    return;
-                }
+    fetch(`/searchStudentData?q=${encodeURIComponent(searchInput)}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch student data');
+            return response.json();
+        })
+        .then(data => {
+            const dataTableRow = document.getElementById('tableBody');
+            dataTableRow.innerHTML = '';
 
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+            if (data.length === 0) {
+                dataTableRow.innerHTML = '<tr><td colspan="12" id="notFound">No data found.</td></tr>';
+                return;
+            }
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
                         <td>${item.date || ''}</td>
                         <td>${item.student_id || ''}</td>
                         <td>${item.level || ''}</td>
@@ -72,15 +73,23 @@ function filterHome() {
                         <td>${item.status || ''}</td>
                         <td>${item.remarks || ''}</td>
                     `;
-                    dataTableRow.appendChild(row);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                const dataTableRow = document.getElementById('tableBody');
-                dataTableRow.innerHTML = '<tr><td colspan="12">Failed to load data. Please try again later.</td></tr>';
+                dataTableRow.appendChild(row);
             });
-    });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const dataTableRow = document.getElementById('tableBody');
+            dataTableRow.innerHTML = '<tr><td colspan="12">Failed to load data. Please try again later.</td></tr>';
+        });
+}
+
+function handleQRScanURL() {
+    const url = new URLSearchParams(window.location.search);
+    const searchQuery = url.get('search');
+    if (searchQuery) {
+        document.getElementById('searchBar').value = searchQuery;
+        searchStudent(searchQuery);
+    }
 }
 
 function openAddModal() {
@@ -131,4 +140,6 @@ let html5QrCode;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', keyEventListener);
+    document.getElementById('searchBar').addEventListener('input', () => searchStudent());
+    handleQRScanURL();
 });
