@@ -1,20 +1,19 @@
 function editableCell(cell) {
     if (cell.querySelector("input")) return;
 
-    let originalText = cell.innerText;
-    let input = document.createElement("input");
-    input.type = "text";
-    input.value = originalText;
-    input.style.outline = "none";
+    let initialText = cell.innerText;
+    let inputFIeld = document.createElement("input");
+
+    inputFIeld.type = "text";
+    inputFIeld.value = initialText;
+    inputFIeld.style.outline = "none";
     cell.innerHTML = "";
-    cell.appendChild(input);
-    input.focus();
 
-    input.onblur = () => cell.innerHTML = input.value || originalText;
+    cell.appendChild(inputFIeld);
+    inputFIeld.focus();
 
-    input.onkeydown = (event) => {
-        if (event.key === "Enter") input.blur();
-    };
+    inputFIeld.onblur = () => cell.innerHTML = inputFIeld.value || initialText;
+    inputFIeld.onkeydown = (event) => { if (event.key === "Enter") inputFIeld.blur(); };
 }
 
 function addData(event) {
@@ -41,7 +40,6 @@ function searchStudent(searchQuery = null) {
     if (searchQuery !== null) searchBar.value = searchQuery;
 
     const searchInput = searchBar.value.trim().toLowerCase();
-    if (!searchInput) return;
 
     fetch(`/searchStudentData?q=${encodeURIComponent(searchInput)}`)
         .then(response => {
@@ -116,7 +114,7 @@ function onScanSuccess(decodeText, decodeResult) {
 
 function openQRCodeScanner() {
     html5QrCode = new Html5QrcodeScanner(
-        "reader", { fps: 10, qrbox: 250 * 2 }
+        "reader", { fps: 10, qrbox: 250 * 3 }
     );
     html5QrCode.render(onScanSuccess);
 }
@@ -133,13 +131,19 @@ function keyEventListener(event) {
     if (event.key === 'Escape') {
         closeAddModal();
         closeQrScannerModal();
+        document.activeElement.blur();
     }
+}
+
+function eventListeners() {
+    document.addEventListener('keydown', keyEventListener);
+    document.getElementById('searchBar').addEventListener('input', () => searchStudent());
+    document.getElementById('searchForm').addEventListener('submit', (event) => event.preventDefault());
 }
 
 let html5QrCode;
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('keydown', keyEventListener);
-    document.getElementById('searchBar').addEventListener('input', () => searchStudent());
+    eventListeners();
     handleQRScanURL();
 });

@@ -24,7 +24,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#" onclick="openAddModal()">add</a>
                 </ul>
-                <form role="search">
+                <form role="search" id="searchForm">
                     <input class="form-control" id="searchBar" type="search" placeholder="Search (CTRL K)"
                         aria-label="Search" onkeypress="searchStudent()">
                 </form>
@@ -36,21 +36,23 @@
 <div class="containerr">
     <div class="content">
         <div class="table-container">
-            <table>
-                <thead>
+            <b>Information Spreadsheet</b>
+            <table class="table table-striped table-hover table-bordered">
+                {{!-- https://www.geeksforgeeks.org/how-to-make-bootstrap-table-with-sticky-table-head/ --}}
+                <thead style="position: sticky; top: 0;">
                     <tr>
-                        <th>Date</th>
-                        <th>Student #</th>
-                        <th>Level</th>
-                        <th>Program</th>
-                        <th>Guidance Service Availed</th>
-                        <th>Contact Type</th>
-                        <th>Nature Of Concern</th>
-                        <th>Specific Concern</th>
-                        <th>Concern</th>
-                        <th>Intervention</th>
-                        <th>Status</th>
-                        <th>Remarks</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Student #</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Program</th>
+                        <th scope="col">Guidance Service Availed</th>
+                        <th scope="col">Contact Type</th>
+                        <th scope="col">Nature Of Concern</th>
+                        <th scope="col">Specific Concern</th>
+                        <th scope="col">Concern</th>
+                        <th scope="col">Intervention</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Remarks</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">

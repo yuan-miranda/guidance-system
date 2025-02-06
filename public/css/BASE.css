@@ -6,7 +6,6 @@
 
 html,
 body {
-    /* overscroll-behavior: none; */
     user-select: none;
     height: 100%;
 }
@@ -23,28 +22,19 @@ body {
 }
 
 .containerr {
-    flex: auto;
-    /* background-image: url('/background/skibidy.png');
-    background-size: cover;
-    background-repeat: repeat; */
+    flex: 1;
+    overflow: hidden;
 }
 
 .content {
     display: flex;
     flex-direction: column;
     height: 100%;
-
 }
 
 .custom-navbar {
     background-color: #0B5793 !important;
 }
-
-/* img {
-    width: 2rem;
-    display: block;
-    cursor: pointer;
-} */
 
 /* Credit: https://stackoverflow.com/a/7354648
  */

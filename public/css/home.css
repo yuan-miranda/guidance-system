@@ -1,40 +1,19 @@
-
-.button-container {
-    margin: 3px;
-}
-
 .table-container {
     display: flex;
     flex-direction: column;
     overflow-x: auto;
-    white-space: nowrap;
+    overflow-y: auto;
     user-select: text;
     margin: 5px;
 }
 
-table {
-    border-collapse: collapse;
+td, th {
+    white-space: nowrap;
 }
 
-th,
-td {
-    border: 1px solid #000;
-    padding: 8px;
-    color: black;
-    background-color: #fff;
-}
-
-th {
-    background-color: #f4d03f;
-    text-align: left;
-}
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #ddd;
+td input {
+    width: 100%;
+    border: none;
 }
 
 .qr-code-scan {
@@ -58,7 +37,6 @@ tr:hover {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Backdrop */
 }
 
 .qr-scanner-modal {
@@ -97,13 +75,16 @@ tr:hover {
     padding: 20px !important;
     border: 1.5px solid black !important;
 }
+
 #reader img[alt="Info icon"] {
     display: none;
 }
+
 #reader img[alt="Camera based scan"] {
     width: 100px !important;
     height: 100px !important;
 }
+
 video {
     border: 1px solid black !important;
 }
