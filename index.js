@@ -63,8 +63,8 @@ app.get('/login', (req, res) => {
 app.get('/qrgen', (req, res) => {
     res.render('qrgen', {
         title: 'QR Code Generator',
-        styles: ['css/qrgen.css'],
-        scripts: ['js/qrgen.js']
+        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/qrgen.css'],
+        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'js/qrgen.js']
     });
 });
 

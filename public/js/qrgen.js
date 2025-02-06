@@ -9,7 +9,22 @@ function generateQR() {
         .then(data => {
             console.log(data);
             const qr = document.getElementById('qr');
-            qr.innerHTML = `<img src="${data.url}">`;
+            qr.innerHTML = `
+                <img src="${data.url}">
+                <div>
+                    <button id="saveBtn" onclick="saveQR()">Save</button>
+                    <button id="discardBtn" onclick="discardQR()">Discard</button>
+                </div>
+            `;
         })
         .catch(error => console.error(error));
+}
+
+function saveQR() {
+    // await index before saving
+}
+
+function discardQR() {
+    const qr = document.getElementById('qr');
+    qr.innerHTML = '';
 }
