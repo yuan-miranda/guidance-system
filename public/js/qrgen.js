@@ -13,7 +13,7 @@ function generateQR() {
                 <img src="${data.url}">
                 <div>
                     <button id="saveBtn" onclick="saveQR()">Save</button>
-                    <button id="discardBtn" onclick="discardQR()">Discard</button>
+                    <button id="discardBtn" onclick="discardQR('${data.url}')">Discard</button>
                 </div>
             `;
         })
@@ -21,10 +21,19 @@ function generateQR() {
 }
 
 function saveQR() {
-    // await index before saving
+    alert('QR code saved');
 }
 
-function discardQR() {
-    const qr = document.getElementById('qr');
-    qr.innerHTML = '';
+function discardQR(url) {
+    fetch(`/delete-qr?file=${encodeURIComponent(url)}`, { method: 'DELETE' })
+        .then(response => {
+            if (response.ok) {
+                const qr = document.getElementById('qr');
+                qr.innerHTML = '';
+                alert('QR code discarded.');
+            } else {
+                alert('Failed to discard QR code.');
+            }
+        })
+        .catch(error => console.error(error));
 }
