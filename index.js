@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import qrcode from 'qrcode';
 import multer from 'multer';
+import fs from 'fs';
 
 const app = express();
 const port = 3000;
@@ -63,8 +64,8 @@ app.get('/login', (req, res) => {
 app.get('/qrgen', (req, res) => {
     res.render('qrgen', {
         title: 'QR Code Generator',
-        styles: ['css/qrgen.css'],
-        scripts: ['js/qrgen.js']
+        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/qrgen.css'],
+        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'js/qrgen.js']
     });
 });
 
@@ -94,6 +95,22 @@ app.get("/generate-qr", (req, res) => {
             return res.status(500).send("Error generating QR code");
         }
         res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
+    });
+});
+
+app.delete("/delete-qr", (req, res) => {
+    const file = req.query.file;
+    if (!file) {
+        return res.status(400).send("File query parameter is required");
+    }
+
+    const filePath = join(__dirname, 'public/cdn', file);
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error('Error deleting file:', err);
+            return res.status(500).send('Error deleting file');
+        }
+        res.send('File deleted successfully');
     });
 });
 
