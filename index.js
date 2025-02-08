@@ -163,7 +163,6 @@ app.get('/upload-xlsx', (req, res) => {
 });
 
 app.post("/upload", upload.single("file"), (req, res) => {
-    if (!req.file) return res.status(400).send("Please upload a file");
     try {
         const filePath = path.resolve(req.file.path);
         
