@@ -27,7 +27,6 @@ function addData(event) {
     })
         .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
             window.location.reload();
         })
         .catch((error) => {

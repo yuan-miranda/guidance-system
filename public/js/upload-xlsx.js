@@ -12,7 +12,6 @@ function jsonFormSubmitListener() {
                 body: jsonFormInput
             });
             if (response.ok) {
-                alert('JSON converted to .xlsx');
                 const blob = await response.blob();
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
