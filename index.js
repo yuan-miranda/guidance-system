@@ -32,7 +32,11 @@ const dbPromise = open({
     driver: sqlite3.Database
 });
 
-app.engine('handlebars', engine());
+app.engine('handlebars', engine({
+    helpers: {
+        include: (path) => fs.readFileSync(join(__dirname, path), 'utf-8'),
+    },
+}));
 app.set('view engine', 'handlebars');
 app.set('views', join(__dirname, 'views'));
 
@@ -43,13 +47,14 @@ app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
 app.use("/background", express.static(join(__dirname, 'public/cdn/background')));
 
-
 // home
 app.get('/', async (req, res) => {
     const db = await dbPromise;
     const home = await db.all('SELECT * FROM StudentData');
     res.render('home', {
         title: 'Home',
+        beforeBody: ['views/partials/HEADER.handlebars'],
+        afterBody: [],
         styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/home.css'],
         scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', '/node_modules/html5-qrcode/html5-qrcode.min.js', 'js/home.js'],
         home
@@ -116,10 +121,6 @@ app.get("/generate-qr", (req, res) => {
 
     const sanitizedData = data.replace(/[\/\\?%*:|"<>]/g, '-');
     const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(data)}`
-    console.log(url)
-
-    // console.log(req.protocol)
-    // console.log(req.get('host'))
 
     qrcode.toFile(`public/cdn/qr/${sanitizedData}.png`, url, {
         color: {
@@ -130,7 +131,6 @@ app.get("/generate-qr", (req, res) => {
         margin: 2
     }, (err) => {
         if (err) {
-            console.error("Error generating QR code:", err);
             return res.status(500).send("Error generating QR code");
         }
         res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
@@ -146,7 +146,6 @@ app.delete("/delete-qr", (req, res) => {
     const filePath = join(__dirname, 'public/cdn', file);
     fs.unlink(filePath, (err) => {
         if (err) {
-            console.error('Error deleting file:', err);
             return res.status(500).send('Error deleting file');
         }
         res.send('File deleted successfully');
@@ -184,7 +183,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
 app.post("/convert", express.json(), (req, res) => {
     if (!req.body || !Array.isArray(req.body)) return res.status(400).send("Please provide JSON data");
     try {
-        console.log(req.body);
         const data = req.body;
         const worksheet = xlsx.utils.json_to_sheet(data);
         const workbook = xlsx.utils.book_new();
@@ -193,7 +191,6 @@ app.post("/convert", express.json(), (req, res) => {
         const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
 
         fs.writeFileSync(path.join(__dirname, 'public/cdn/uploads', `${Date.now()}-converted.xlsx`), fileBuffer);
-        console.log(path.join(__dirname, 'public/cdn/uploads', `${Date.now()}-converted.xlsx`));
 
         res.setHeader("Content-Disposition", "attachment; filename=converted.xlsx");
         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

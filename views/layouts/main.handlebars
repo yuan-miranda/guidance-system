@@ -10,7 +10,16 @@
 </head>
 
 <body>
+    {{#each beforeBody}}
+    {{{include this}}}
+    {{/each}}
+
     {{{body}}}
+
+    {{#each afterBody}}
+    {{{include this}}}
+    {{/each}}
+
     {{#each scripts}}
     <script src="{{this}}"></script>
     {{/each}}
