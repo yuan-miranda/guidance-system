@@ -53,10 +53,10 @@ app.get('/', async (req, res) => {
     const home = await db.all('SELECT * FROM StudentData');
     res.render('home', {
         title: 'Home',
-        beforeBody: ['views/partials/HEADER.handlebars'],
+        beforeBody: ['views/partials/HEADER.handlebars', 'views/partials/MODAL.handlebars'],
         afterBody: [],
-        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/home.css'],
-        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', '/node_modules/html5-qrcode/html5-qrcode.min.js', 'js/home.js'],
+        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/home.css', 'css/qrgen.css', 'css/upload-xlsx.css'],
+        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', '/node_modules/html5-qrcode/html5-qrcode.min.js', 'js/home.js', 'js/qrgen.js', 'js/upload-xlsx.js'],
         home
     });
 });
@@ -105,14 +105,6 @@ app.get('/login', (req, res) => {
 
 
 // qrgen
-app.get('/qrgen', (req, res) => {
-    res.render('qrgen', {
-        title: 'QR Code Generator',
-        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/qrgen.css'],
-        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'js/qrgen.js']
-    });
-});
-
 app.get("/generate-qr", (req, res) => {
     const data = req.query.text;
     if (!data) {
@@ -152,15 +144,7 @@ app.delete("/delete-qr", (req, res) => {
     });
 });
 
-// upload
-app.get('/upload-xlsx', (req, res) => {
-    res.render('upload-xlsx', {
-        title: 'Upload',
-        styles: ['/node_modules/bootstrap/dist/css/bootstrap.min.css', 'css/BASE.css', 'css/upload-xlsx.css'],
-        scripts: ['/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js', 'js/upload-xlsx.js']
-    });
-});
-
+// upload-xlsx
 app.post("/upload", upload.single("file"), (req, res) => {
     try {
         const filePath = path.resolve(req.file.path);

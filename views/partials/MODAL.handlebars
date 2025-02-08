@@ -1,0 +1,132 @@
+<div class="modal fade" id="uploadXLSXModal" tabindex="-1" aria-labelledby="uploadXLSXModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="uploadXLSXModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="upload">
+                    <h3>Upload .xlsx file and convert it into JSON</h3>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" accept=".xls, .xlsx">
+                        <button type="submit">Upload</button>
+                    </form>
+                </div>
+                <div class="convert">
+                    <h3>Convert JSON text to .xlsx file</h3>
+                    <form id="jsonForm">
+                        <textarea name="json" id="jsonInput" cols="30" rows="10"></textarea>
+                        <button type="submit">Convert</button>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="generateQRModal" tabindex="-1" aria-labelledby="generateQRModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="generateQRModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <input type="text" id="text" placeholder="Enter text to generate QR code">
+                <button onclick="generateQR()">Generate QR</button>
+                <div id="qr"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addColumnModal" tabindex="-1" aria-labelledby="addColumnModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addColumnModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <h2>Add New Data</h2>
+                <form id="addDataForm" enctype="multipart/form-data">
+                    <label for="student_id">Student #:</label>
+                    <input type="text" id="student_id" name="student_id" required>
+                    <br>
+                    <label for="level">Level:</label>
+                    <input type="text" id="level" name="level" required>
+                    <br>
+                    <label for="program">Program:</label>
+                    <input type="text" id="program" name="program" required>
+                    <br>
+                    <label for="guidance_service_availed">Guidance Service Availed:</label>
+                    <input type="text" id="guidance_service_availed" name="guidance_service_availed" required>
+                    <br>
+                    <label for="contact_type">Contact Type:</label>
+                    <input type="text" id="contact_type" name="contact_type" required>
+                    <br>
+                    <label for="nature_of_concern">Nature Of Concern:</label>
+                    <input type="text" id="nature_of_concern" name="nature_of_concern" required>
+                    <br>
+                    <label for="specific_concern">Specific Concern:</label>
+                    <input type="text" id="specific_concern" name="specific_concern" required>
+                    <br>
+                    <label for="concern">Concern:</label>
+                    <input type="text" id="concern" name="concern" required>
+                    <br>
+                    <label for="intervention">Intervention:</label>
+                    <input type="text" id="intervention" name="intervention" required>
+                    <br>
+                    <label for="status">Status:</label>
+                    <input type="text" id="status" name="status" required>
+                    <br>
+                    <label for="remarks">Remarks:</label>
+                    <input type="text" id="remarks" name="remarks" required>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addData()">Add Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="scanQRModal" tabindex="-1" aria-labelledby="scanQRModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="scanQRModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    onclick="closeQrScannerModal()"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="container">
+                    <div class="section">
+                        <div id="reader"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    onclick="closeQrScannerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

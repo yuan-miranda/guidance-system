@@ -16,9 +16,7 @@ function editableCell(cell) {
     inputFIeld.onkeydown = (event) => { if (event.key === "Enter") inputFIeld.blur(); };
 }
 
-function addData(event) {
-    event.preventDefault();
-
+function addData() {
     const formData = new FormData(document.getElementById('addDataForm'));
 
     fetch('/addStudentData', {
@@ -89,21 +87,11 @@ function handleQRScanURL() {
     }
 }
 
-function openAddModal() {
-    document.getElementById('addDataModal').style.display = 'block';
-}
-
-function closeAddModal() {
-    document.getElementById('addDataModal').style.display = 'none';
-}
-
 function openQrScannerModal() {
-    document.getElementById('qrScannerModal').style.display = 'block';
     openQRCodeScanner();
 }
 
 function closeQrScannerModal() {
-    document.getElementById('qrScannerModal').style.display = 'none';
     closeQRCodeScanner()
 }
 
@@ -128,7 +116,6 @@ function keyEventListener(event) {
         document.querySelector('input[type="search"]').focus();
     }
     if (event.key === 'Escape') {
-        closeAddModal();
         closeQrScannerModal();
         document.activeElement.blur();
     }

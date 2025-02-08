@@ -40,65 +40,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="qr-code-scan">
-            <a onclick="openQrScannerModal()">
+        <div class="qr-code-scan-icon">
+            <a onclick="openQrScannerModal()" data-bs-toggle="modal" data-bs-target="#scanQRModal">
                 <img src="/node_modules/bootstrap-icons/icons/qr-code-scan.svg" alt="QR Code Scan"
                     style="width: 2.5em; height: 2.5em; filter: invert(100%);">
             </a>
-        </div>
-    </div>
-</div>
-
-<div id="addDataModal" class="add-modal-data">
-    <div class="modal-content">
-        <span class="close" onclick="closeAddModal()">close</span>
-        <h2>Add New Data</h2>
-        <form id="addDataForm" enctype="multipart/form-data" onsubmit="addData(event)">
-            <label for="student_id">Student #:</label>
-            <input type="text" id="student_id" name="student_id" required>
-            <br>
-            <label for="level">Level:</label>
-            <input type="text" id="level" name="level" required>
-            <br>
-            <label for="program">Program:</label>
-            <input type="text" id="program" name="program" required>
-            <br>
-            <label for="guidance_service_availed">Guidance Service Availed:</label>
-            <input type="text" id="guidance_service_availed" name="guidance_service_availed" required>
-            <br>
-            <label for="contact_type">Contact Type:</label>
-            <input type="text" id="contact_type" name="contact_type" required>
-            <br>
-            <label for="nature_of_concern">Nature Of Concern:</label>
-            <input type="text" id="nature_of_concern" name="nature_of_concern" required>
-            <br>
-            <label for="specific_concern">Specific Concern:</label>
-            <input type="text" id="specific_concern" name="specific_concern" required>
-            <br>
-            <label for="concern">Concern:</label>
-            <input type="text" id="concern" name="concern" required>
-            <br>
-            <label for="intervention">Intervention:</label>
-            <input type="text" id="intervention" name="intervention" required>
-            <br>
-            <label for="status">Status:</label>
-            <input type="text" id="status" name="status" required>
-            <br>
-            <label for="remarks">Remarks:</label>
-            <input type="text" id="remarks" name="remarks" required>
-            <br>
-            <button type="submit">Add Data</button>
-        </form>
-    </div>
-</div>
-
-<div id="qrScannerModal" class="qr-scanner-modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeQrScannerModal()">close</span>
-        <div class="container">
-            <div class="section">
-                <div id="reader"></div>
-            </div>
         </div>
     </div>
 </div>
