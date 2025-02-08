@@ -7,7 +7,7 @@
     </div>
     <div class="convert">
         <h3>Convert JSON text to .xlsx file</h3>
-        <form id="jsonForm">
+        <form id="jsonForm" onsubmit="jsonFormSubmit(event)">
             <textarea name="json" id="jsonInput" cols="30" rows="10"></textarea>
             <button type="submit">Convert</button>
         </form>
