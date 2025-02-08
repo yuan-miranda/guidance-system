@@ -7,7 +7,6 @@ function generateQR() {
     fetch(`/generate-qr?text=${encodeURIComponent(text)}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             const qr = document.getElementById('qr');
             qr.innerHTML = `
                 <img src="${data.url}">
