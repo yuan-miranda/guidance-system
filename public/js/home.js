@@ -84,6 +84,8 @@ function handleQRScanURL() {
     if (searchQuery) {
         document.getElementById('searchBar').value = searchQuery;
         searchStudent(searchQuery);
+        document.getElementById('searchBar').focus();
+        searchBar.setSelectionRange(searchBar.value.length, searchBar.value.length);
     }
 }
 
