@@ -108,15 +108,6 @@ app.get('/searchStudentData', async (req, res) => {
     res.json(data);
 });
 
-app.get('/login', (req, res) => {
-    res.render('login', {
-        title: 'Login',
-        styles: ['css/login.css'],
-        scripts: ['js/login.js']
-    });
-});
-
-
 // qrgen
 app.get("/generate-qr", (req, res) => {
     const data = req.query.text;
