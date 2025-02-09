@@ -60,6 +60,7 @@ app.get('/', async (req, res) => {
         afterBody: [],
         styles: [
             '/node_modules/bootstrap/dist/css/bootstrap.min.css',
+            '/node_modules/dropzone/dist/dropzone.css',
             'css/BASE.css',
             'css/home.css',
             'css/qrgen.css',
@@ -67,8 +68,11 @@ app.get('/', async (req, res) => {
         ],
         scripts: [
             '/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
-            '/node_modules/html5-qrcode/html5-qrcode.min.js', 'js/home.js',
-            'js/qrgen.js', 'js/upload-xlsx.js'
+            '/node_modules/html5-qrcode/html5-qrcode.min.js',
+            '/node_modules/dropzone/dist/dropzone-min.js',
+            'js/home.js',
+            'js/qrgen.js',
+            'js/upload-xlsx.js'
         ],
         home
     });
@@ -152,7 +156,7 @@ app.delete("/delete-qr", (req, res) => {
 app.post("/upload", upload.single("file"), (req, res) => {
     try {
         const filePath = path.resolve(req.file.path);
-        
+
         // readFile doesnt work for some reason, so I buffer read it instead
         // const workbook = xlsx.readFile(filePath);
 

@@ -2,26 +2,30 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="uploadXLSXModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="uploadXLSXModalLabel">Upload XLSX</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
-                <div class="upload">
-                    <h3>Upload .xlsx file and convert it into JSON</h3>
-                    <form action="/upload" method="post" enctype="multipart/form-data">
-                        <input type="file" name="file" accept=".xls, .xlsx" required>
-                        <button type="submit">Upload</button>
-                    </form>
+                <form class="dropzone" id="uploadDropzone" action="/upload" method="post" enctype="multipart/form-data">
+                </form>
+                <div id="previews"></div>
+                <hr>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="spreadsheetRadios" id="infoSpreadsheet"
+                        value="1">
+                    <label class="form-check-label" for="infoSpreadsheet">Information Spreadsheet</label>
                 </div>
-                <div class="convert">
-                    <h3>Convert JSON text to .xlsx file</h3>
-                    <form id="jsonForm" onsubmit="jsonFormSubmit(event)">
-                        <textarea name="json" id="jsonInput" cols="30" rows="10"></textarea>
-                        <button type="submit">Convert</button>
-                    </form>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="spreadsheetRadios" id="counselingSpreadsheet"
+                        value="2">
+                    <label class="form-check-label" for="counselingSpreadsheet">Counseling Spreadsheet</label>
                 </div>
-
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="spreadsheetRadios"
+                        id="individualInventorySpreadsheet" value="3">
+                    <label class="form-check-label" for="individualInventorySpreadsheet">Individual Inventory
+                        Spreadsheet</label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
