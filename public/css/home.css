@@ -4,7 +4,10 @@
     overflow-x: auto;
     overflow-y: auto;
     user-select: text;
-    margin: 5px;
+}
+
+.form-select:focus {
+    box-shadow: none;
 }
 
 td,
@@ -21,15 +24,14 @@ td input {
     position: fixed;
     bottom: 0;
     right: 0;
-    margin: 2em;
     background-color: #0B5793;
     border-radius: 15%;
-    padding: 8px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.6);
+    padding: 0.5rem;
+    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.6);
 }
 
 #reader {
-    padding: 20px !important;
+    padding: 2rem !important;
 }
 
 #reader img[alt="Info icon"] {
@@ -37,10 +39,10 @@ td input {
 }
 
 #reader img[alt="Camera based scan"] {
-    width: 100px !important;
-    height: 100px !important;
+    width: 5rem !important;
+    height: 5rem !important;
 }
 
 video {
-    border: 1px solid black !important;
+    border: 0.1rem solid black !important;
 }

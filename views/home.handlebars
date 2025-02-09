@@ -1,7 +1,14 @@
 <div class="containerr">
     <div class="content">
-        <div class="table-container">
-            <b>Information Spreadsheet</b>
+        <div class="m-1">
+            <select class="form-select form-select-md fw-bold" aria-label="Default select menu">
+                <option selected>Information Spreadsheet</option>
+                <option value="counseling">Counseling Spreadsheet</option>
+                <option value="inventory">Individual Inventory Spreadsheet</option>
+            </select>
+        </div>
+
+        <div class="table-container m-1">
             <table class="table table-striped table-hover table-bordered">
                 {{!-- https://www.geeksforgeeks.org/how-to-make-bootstrap-table-with-sticky-table-head/ --}}
                 <thead style="position: sticky; top: 0;">
@@ -40,10 +47,10 @@
                 </tbody>
             </table>
         </div>
-        <div class="qr-code-scan-icon">
+        <div class="qr-code-scan-icon m-4">
             <a onclick="openQrScannerModal()" data-bs-toggle="modal" data-bs-target="#scanQRModal">
                 <img src="/node_modules/bootstrap-icons/icons/qr-code-scan.svg" alt="QR Code Scan"
-                    style="width: 2.5em; height: 2.5em; filter: invert(100%);">
+                    style="width: 2.5rem; height: 2.5rem; filter: invert(100%);">
             </a>
         </div>
     </div>
