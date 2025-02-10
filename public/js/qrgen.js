@@ -7,9 +7,9 @@ function generateQR() {
     fetch(`/generate-qr?text=${encodeURIComponent(text)}`)
         .then(response => response.json())
         .then(data => {
-            const qr = document.getElementById('qr');
-            qr.innerHTML = `
-                <img src="${data.url}">
+            const qrImagePreview = document.getElementById('qrImagePreview');
+            qrImagePreview.innerHTML = `
+                <img src="${data.url}" style="max-width: 100%; height: auto;">
                 <div>
                     <button id="saveBtn" onclick="saveQR()">Save</button>
                     <button id="discardBtn" onclick="discardQR('${data.url}')">Discard</button>
@@ -27,8 +27,8 @@ function discardQR(url) {
     fetch(`/delete-qr?file=${encodeURIComponent(url)}`, { method: 'DELETE' })
         .then(response => {
             if (response.ok) {
-                const qr = document.getElementById('qr');
-                qr.innerHTML = '';
+                const qrImagePreview = document.getElementById('qrImagePreview');
+                qrImagePreview.innerHTML = '';
                 alert('QR code discarded.');
             } else {
                 alert('Failed to discard QR code.');

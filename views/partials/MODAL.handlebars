@@ -39,14 +39,18 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="generateQRModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="generateQRModalLabel">Generate QR</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
-                <input type="text" id="text" placeholder="Enter text to generate QR code">
-                <button onclick="generateQR()">Generate QR</button>
-                <div id="qr"></div>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="text" placeholder="Enter text to generate QR code"
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+                        onclick="generateQR()">Generate QR</button>
+                    <div id="qrImagePreview"></div>
+                </div>
 
             </div>
             <div class="modal-footer">
