@@ -57,6 +57,14 @@ function openDropzone() {
             this.on("addedfile", function (file) {
                 if (dropzone.files.length > 1) dropzone.removeFile(dropzone.files[0]);
             });
+            this.on("dragenter", function () {
+                document.querySelector("#uploadDropzone .dz-message").textContent = "Drop the file to upload";
+            });
+            this.on("dragleave", function (event) {
+                if (!event.relatedTarget || !event.relatedTarget.closest("#uploadDropzone")) {
+                    document.querySelector("#uploadDropzone .dz-message").textContent = "Drop .xlsx or .xls file here to upload";
+                }
+            });
         },
     });
 }
