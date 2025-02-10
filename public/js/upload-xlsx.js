@@ -54,16 +54,21 @@ function openDropzone() {
             // keep only the latest file
             // comment to allow multiple file uploads
             // (add toast to notify user later)
+            const dzMessage = document.querySelector("#uploadDropzone .dz-message");
             this.on("addedfile", function (file) {
+                dzMessage.textContent = "File added";
                 if (dropzone.files.length > 1) dropzone.removeFile(dropzone.files[0]);
             });
             this.on("dragenter", function () {
-                document.querySelector("#uploadDropzone .dz-message").textContent = "Drop the file to upload";
+                dzMessage.textContent = "Drop the file to upload";
             });
             this.on("dragleave", function (event) {
                 if (!event.relatedTarget || !event.relatedTarget.closest("#uploadDropzone")) {
-                    document.querySelector("#uploadDropzone .dz-message").textContent = "Drop .xlsx or .xls file here to upload";
+                    dzMessage.textContent = "Drop .xlsx or .xls file here to upload";
                 }
+            });
+            this.on("removedfile", function () {
+                dzMessage.textContent = "Drop .xlsx or .xls file here to upload";
             });
         },
     });
