@@ -195,9 +195,6 @@ function keyEventListener(event) {
 function searchEventListener() {
     document.addEventListener('keydown', keyEventListener);
     document.getElementById('searchBar').addEventListener('input', () => searchStudent());
-    document.getElementById('searchBar').addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') searchStudent();
-    });
     document.getElementById('searchForm').addEventListener('submit', (event) => event.preventDefault());
     document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
     document.getElementById('closeQrScannerModalTitle').addEventListener('click', closeQrScannerModal);
