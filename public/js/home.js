@@ -123,15 +123,22 @@ function keyEventListener(event) {
     }
 }
 
-function eventListeners() {
+function searchEventListener() {
     document.addEventListener('keydown', keyEventListener);
     document.getElementById('searchBar').addEventListener('input', () => searchStudent());
+    document.getElementById('searchBar').addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') searchStudent();
+    });
     document.getElementById('searchForm').addEventListener('submit', (event) => event.preventDefault());
+    document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
+    document.getElementById('addDataButton').addEventListener('click', addData);
+    document.getElementById('closeQrScannerModalTitle').addEventListener('click', closeQrScannerModal);
+    document.getElementById('closeQrScannerModalFooter').addEventListener('click', closeQrScannerModal);
 }
 
 let html5QrCode;
 
 document.addEventListener('DOMContentLoaded', () => {
-    eventListeners();
+    searchEventListener();
     handleQRScanURL();
 });

@@ -63,16 +63,18 @@ app.get('/', async (req, res) => {
             '/node_modules/dropzone/dist/dropzone.css',
             'css/BASE.css',
             'css/home.css',
-            'css/qrgen.css',
-            'css/upload-xlsx.css'
+            'css/generateQR.css',
+            'css/uploadXLSX.css'
         ],
-        scripts: [
+        nodeModules: [
             '/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
             '/node_modules/html5-qrcode/html5-qrcode.min.js',
             '/node_modules/dropzone/dist/dropzone-min.js',
+        ],
+        scripts: [
             'js/home.js',
-            'js/qrgen.js',
-            'js/upload-xlsx.js'
+            'js/generateQR.js',
+            'js/uploadXLSX.js'
         ],
         home
     });
@@ -112,7 +114,7 @@ app.get('/searchStudentData', async (req, res) => {
     res.json(data);
 });
 
-// qrgen
+// generateQR
 app.get("/generate-qr", (req, res) => {
     const data = req.query.text;
     if (!data) {
@@ -152,7 +154,7 @@ app.delete("/delete-qr", (req, res) => {
     });
 });
 
-// upload-xlsx
+// uploadXLSX
 app.post("/upload", upload.single("file"), (req, res) => {
     try {
         const filePath = path.resolve(req.file.path);

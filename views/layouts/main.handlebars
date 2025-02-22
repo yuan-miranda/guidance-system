@@ -20,8 +20,12 @@
     {{{include this}}}
     {{/each}}
 
-    {{#each scripts}}
+    {{#each nodeModules}}
     <script src="{{this}}"></script>
+    {{/each}}
+
+    {{#each scripts}}
+    <script type="module" src="{{this}}"></script>
     {{/each}}
 </body>
 

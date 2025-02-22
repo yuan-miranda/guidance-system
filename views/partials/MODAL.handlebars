@@ -28,8 +28,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
-                <button type="button" class="btn btn-primary">Upload</button>
+                <button type="button" class="btn btn-secondary" id="uploadXLSXDiscardButton">Discard</button>
+                <button type="button" class="btn btn-primary" id="uploadXLSXUploadButton">Upload</button>
             </div>
         </div>
     </div>
@@ -47,15 +47,14 @@
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" id="text" placeholder="Enter text to generate QR code"
                         aria-label="Recipient's username" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-                        onclick="generateQR()">Generate QR</button>
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">Generate QR</button>
                     <div id="qrImagePreview"></div>
                 </div>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard</button>
-                <button type="button" class="btn btn-primary">Download</button>
+                <button type="button" class="btn btn-secondary" id="generateQRDiscardButton">Discard</button>
+                <button type="button" class="btn btn-primary" id="generateQRDownloadButton">Download QR</button>
             </div>
         </div>
     </div>
@@ -65,12 +64,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addColumnModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="addColumnModalLabel">Add Column</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
-                <h2>Add New Data</h2>
                 <form id="addDataForm" enctype="multipart/form-data">
                     <label for="student_id">Student #:</label>
                     <input type="text" id="student_id" name="student_id" required>
@@ -105,10 +103,11 @@
                     <label for="remarks">Remarks:</label>
                     <input type="text" id="remarks" name="remarks" required>
                 </form>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="addData()">Add Data</button>
+                <button type="button" class="btn btn-primary" id="addDataButton">Add Data</button>
             </div>
         </div>
     </div>
@@ -120,7 +119,7 @@
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="scanQRModalLabel">Modal title</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                    onclick="closeQrScannerModal()"></button>
+                    id="closeQrScannerModalTitle"></button>
             </div>
             <div class="modal-body">
 
@@ -133,7 +132,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                    onclick="closeQrScannerModal()">Close</button>
+                    id="closeQrScannerModalFooter">Close</button>
             </div>
         </div>
     </div>

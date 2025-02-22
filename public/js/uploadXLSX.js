@@ -28,8 +28,19 @@
 //     }
 // }
 
-function openDropzone() {
+function firstRadioChecked() {
+    document.querySelectorAll('input[name="spreadsheetRadios"]').forEach(radio => radio.checked = false);
+    document.getElementById('infoSpreadsheet').checked = true;
+}
+
+function openUploadXLSXModal() {
     if (Dropzone.instances.length > 0) Dropzone.instances.forEach((dropzone) => dropzone.destroy());
+    firstRadioChecked();
+
+    const uploadXLSXDiscardButton = document.getElementById("uploadXLSXDiscardButton");
+    const uploadXLSXUploadButton = document.getElementById("uploadXLSXUploadButton");
+    uploadXLSXDiscardButton.disabled = true;
+    uploadXLSXUploadButton.disabled = true;
 
     dropzone = new Dropzone("#uploadDropzone", {
         url: "/upload",
@@ -51,15 +62,19 @@ function openDropzone() {
             </div>
         `,
         init: function () {
-            // keep only the latest file
-            // comment to allow multiple file uploads
-            // (add toast to notify user later)
             const dzMessage = document.querySelector("#uploadDropzone .dz-message");
             this.on("addedfile", function (file) {
+                if (!file.name.match(/\.(xls|xlsx)$/i)) {
+                    dropzone.removeFile(file);
+                    alert("Only .xls or .xlsx files are allowed.");
+                    return;
+                }
                 dzMessage.textContent = "File added";
+                uploadXLSXDiscardButton.disabled = false;
+                uploadXLSXUploadButton.disabled = false;
                 if (dropzone.files.length > 1) dropzone.removeFile(dropzone.files[0]);
             });
-            this.on("dragenter", function () {
+            this.on("dragenter", function (file) {
                 dzMessage.textContent = "Drop the file to upload";
             });
             this.on("dragleave", function (event) {
@@ -68,30 +83,29 @@ function openDropzone() {
                 }
             });
             this.on("removedfile", function () {
-                dzMessage.textContent = "Drop .xlsx or .xls file here to upload";
+                if (dropzone.files.length === 0) {
+                    uploadXLSXDiscardButton.disabled = true;
+                    uploadXLSXUploadButton.disabled = true;
+                    dzMessage.textContent = "Drop .xlsx or .xls file here to upload";
+                }
             });
         },
     });
 }
 
-function closeDropzone() {
+function closeUploadXLSXModal() {
     dropzone.removeAllFiles(true);
-
-    // for some reason, the radios are not reset when the modal is closed, cause
-    // it only makes modal hidden not destroyed on close
-
-    document.querySelectorAll('input[name="spreadsheetRadios"]').forEach(radio => radio.checked = false);
-    document.getElementById('infoSpreadsheet').checked = true;
+    firstRadioChecked();
 }
 
-
-function eventListeners() {
-    document.getElementById("uploadXLSXModal").addEventListener("shown.bs.modal", openDropzone);
-    document.getElementById("uploadXLSXModal").addEventListener("hidden.bs.modal", closeDropzone);
+function modalEventListener() {
+    document.getElementById("uploadXLSXModal").addEventListener("shown.bs.modal", openUploadXLSXModal);
+    document.getElementById("uploadXLSXModal").addEventListener("hidden.bs.modal", closeUploadXLSXModal);
+    document.getElementById("uploadXLSXDiscardButton").addEventListener("click", () => dropzone.removeAllFiles(true));
 }
 
 let dropzone;
 
 document.addEventListener('DOMContentLoaded', () => {
-    eventListeners();
+    modalEventListener();
 });
