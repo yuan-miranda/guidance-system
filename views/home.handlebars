@@ -9,10 +9,11 @@
         </div>
 
         <div class="table-container m-1">
-            <table class="table table-striped table-hover table-bordered">
-                {{!-- https://www.geeksforgeeks.org/how-to-make-bootstrap-table-with-sticky-table-head/ --}}
+            <table class="table table-striped table-bordered" id="table">
+                <!-- https://www.geeksforgeeks.org/how-to-make-bootstrap-table-with-sticky-table-head/ -->
                 <thead style="position: sticky; top: 0;">
                     <tr>
+                        <th scope="col">#</th>
                         <th scope="col">Date</th>
                         <th scope="col">Student #</th>
                         <th scope="col">Level</th>
@@ -27,24 +28,7 @@
                         <th scope="col">Remarks</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    {{#each home}}
-                    <tr>
-                        <td ondblclick="editableCell(this)">{{date}}</td>
-                        <td ondblclick="editableCell(this)">{{student_id}}</td>
-                        <td ondblclick="editableCell(this)">{{level}}</td>
-                        <td ondblclick="editableCell(this)">{{program}}</td>
-                        <td ondblclick="editableCell(this)">{{guidance_service_availed}}</td>
-                        <td ondblclick="editableCell(this)">{{contact_type}}</td>
-                        <td ondblclick="editableCell(this)">{{nature_of_concern}}</td>
-                        <td ondblclick="editableCell(this)">{{specific_concern}}</td>
-                        <td ondblclick="editableCell(this)">{{concern}}</td>
-                        <td ondblclick="editableCell(this)">{{intervention}}</td>
-                        <td ondblclick="editableCell(this)">{{status}}</td>
-                        <td ondblclick="editableCell(this)">{{remarks}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
+                <tbody id="tableBody"></tbody>
             </table>
         </div>
         <div class="qr-code-scan-icon m-4">

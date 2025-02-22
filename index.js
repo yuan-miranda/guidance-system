@@ -49,8 +49,6 @@ app.use("/background", express.static(join(__dirname, 'public/cdn/background')))
 
 // home
 app.get('/', async (req, res) => {
-    const db = await dbPromise;
-    const home = await db.all('SELECT * FROM StudentData');
     res.render('home', {
         title: 'Home',
         beforeBody: [
@@ -76,40 +74,56 @@ app.get('/', async (req, res) => {
             'js/generateQR.js',
             'js/uploadXLSX.js'
         ],
-        home
     });
 });
 
-app.post('/addStudentData', upload.single("file"), async (req, res) => {
-    const { student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks } = req.body;
+app.post('/saveChanges', async (req, res) => {
+    const data = req.body;
     const db = await dbPromise;
-
-    const date = new Date().toISOString().split('T')[0];
-    await db.run(`
-        INSERT INTO StudentData (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
-    res.json({ message: 'Data added successfully' });
+    try {
+        await Promise.all(data.map(async row => {
+            const [id, date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks] = row;
+            const rowExists = await db.get('SELECT id FROM StudentData WHERE id = ?', [id]);
+            if (!rowExists) {
+                await db.run(`
+                    INSERT INTO StudentData
+                    (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
+            } else {
+                await db.run(`
+                    UPDATE StudentData SET
+                    date = ?, student_id = ?, level = ?, program = ?, guidance_service_availed = ?, contact_type = ?, nature_of_concern = ?, specific_concern = ?, concern = ?, intervention = ?, status = ?, remarks = ?
+                    WHERE id = ?
+                    `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks, id]);
+            }
+        }));
+        res.json({ message: 'Changes saved successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to save changes' });
+    }
 });
 
 app.get('/searchStudentData', async (req, res) => {
     const { q } = req.query;
     const db = await dbPromise;
-    const data = await db.all(
-        `SELECT * FROM StudentData 
-         WHERE date LIKE ?
-         OR student_id LIKE ?
-         OR level LIKE ?
-         OR program LIKE ?
-         OR guidance_service_availed LIKE ?
-         OR contact_type LIKE ?
-         OR nature_of_concern LIKE ?
-         OR specific_concern LIKE ?
-         OR concern LIKE ?
-         OR status LIKE ?
-         OR intervention LIKE ?
-         OR remarks LIKE ?`,
-        Array(12).fill(`%${q}%`)
+    const data = await db.all(`
+        SELECT * FROM StudentData 
+        WHERE id LIKE ?
+        OR date LIKE ?
+        OR student_id LIKE ?
+        OR level LIKE ?
+        OR program LIKE ?
+        OR guidance_service_availed LIKE ?
+        OR contact_type LIKE ?
+        OR nature_of_concern LIKE ?
+        OR specific_concern LIKE ?
+        OR concern LIKE ?
+        OR intervention LIKE ?
+        OR status LIKE ?
+        OR remarks LIKE ?`,
+        Array(13).fill(`%${q}%`)
     );
     res.json(data);
 });

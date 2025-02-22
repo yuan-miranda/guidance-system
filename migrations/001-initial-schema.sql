@@ -1,5 +1,6 @@
 -- Up
 CREATE TABLE StudentData (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     date TEXT,
     student_id TEXT,
     level TEXT,
