@@ -15,11 +15,6 @@ th {
     white-space: nowrap;
 }
 
-td input {
-    /* width: 100%; */
-    border: none;
-}
-
 .qr-code-scan-icon {
     position: fixed;
     bottom: 0;

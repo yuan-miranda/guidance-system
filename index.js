@@ -105,7 +105,7 @@ app.post('/saveChanges', async (req, res) => {
     }
 });
 
-app.get('/searchStudentData', async (req, res) => {
+app.get('/search', async (req, res) => {
     const { q } = req.query;
     const db = await dbPromise;
     const data = await db.all(`
