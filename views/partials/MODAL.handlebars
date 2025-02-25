@@ -6,26 +6,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="dropzone" id="uploadDropzone" action="/upload" method="post" enctype="multipart/form-data">
+                <form class="dropzone" id="uploadDropzone" enctype="multipart/form-data">
                 </form>
                 <div id="previews"></div>
-                <hr>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="spreadsheetRadios" id="infoSpreadsheet"
-                        value="1">
-                    <label class="form-check-label" for="infoSpreadsheet">Information Spreadsheet</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="spreadsheetRadios" id="counselingSpreadsheet"
-                        value="2">
-                    <label class="form-check-label" for="counselingSpreadsheet">Counseling Spreadsheet</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="spreadsheetRadios"
-                        id="individualInventorySpreadsheet" value="3">
-                    <label class="form-check-label" for="individualInventorySpreadsheet">Individual Inventory
-                        Spreadsheet</label>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="uploadXLSXDiscardButton">Discard</button>

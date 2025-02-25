@@ -1,32 +1,14 @@
 <div class="containerr">
     <div class="content">
         <div class="m-1">
-            <select class="form-select form-select-md fw-bold" aria-label="Default select menu">
-                <option selected>Information Spreadsheet</option>
-                <option value="counseling">Counseling Spreadsheet</option>
-                <option value="inventory">Individual Inventory Spreadsheet</option>
+            <select class="form-select form-select-md fw-bold" aria-label="Default select menu" id="fileDropdown">
             </select>
         </div>
 
         <div class="table-container m-1">
             <table class="table table-striped table-bordered" id="table">
                 <!-- https://www.geeksforgeeks.org/how-to-make-bootstrap-table-with-sticky-table-head/ -->
-                <thead style="position: sticky; top: 0;">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Student #</th>
-                        <th scope="col">Level</th>
-                        <th scope="col">Program</th>
-                        <th scope="col">Guidance Service Availed</th>
-                        <th scope="col">Contact Type</th>
-                        <th scope="col">Nature Of Concern</th>
-                        <th scope="col">Specific Concern</th>
-                        <th scope="col">Concern</th>
-                        <th scope="col">Intervention</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Remarks</th>
-                    </tr>
+                <thead style="position: sticky; top: 0;" id="tableHead">
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>

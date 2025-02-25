@@ -1,29 +1,72 @@
-function addRow(id = null, date = null, student_id = null, level = null, program = null, guidance_service_availed = null, contact_type = null, nature_of_concern = null, specific_concern = null, concern = null, intervention = null, status = null, remarks = null, focus = true) {
-    const row = document.createElement("tr");
-    const nextRowCount = document.querySelectorAll("#tableBody tr").length + 1;
-    row.innerHTML = `
-        <td id="notEditable">${id || nextRowCount}</td>
-        <td contenteditable="true">${date || ''}</td>
-        <td contenteditable="true">${student_id || ''}</td>
-        <td contenteditable="true">${level || ''}</td>
-        <td contenteditable="true">${program || ''}</td>
-        <td contenteditable="true">${guidance_service_availed || ''}</td>
-        <td contenteditable="true">${contact_type || ''}</td>
-        <td contenteditable="true">${nature_of_concern || ''}</td>
-        <td contenteditable="true">${specific_concern || ''}</td>
-        <td contenteditable="true">${concern || ''}</td>
-        <td contenteditable="true">${intervention || ''}</td>
-        <td contenteditable="true">${status || ''}</td>
-        <td contenteditable="true">${remarks || ''}</td>
-    `;
-    document.getElementById("tableBody").appendChild(row);
+// function addRow(id = null, date = null, student_id = null, level = null, program = null, guidance_service_availed = null, contact_type = null, nature_of_concern = null, specific_concern = null, concern = null, intervention = null, status = null, remarks = null, focus = true) {
+//     const row = document.createElement("tr");
+//     const nextRowCount = document.querySelectorAll("#tableBody tr").length + 1;
+//     row.innerHTML = `
+//         <td id="notEditable">${id || nextRowCount}</td>
+//         <td contenteditable="true">${date || ''}</td>
+//         <td contenteditable="true">${student_id || ''}</td>
+//         <td contenteditable="true">${level || ''}</td>
+//         <td contenteditable="true">${program || ''}</td>
+//         <td contenteditable="true">${guidance_service_availed || ''}</td>
+//         <td contenteditable="true">${contact_type || ''}</td>
+//         <td contenteditable="true">${nature_of_concern || ''}</td>
+//         <td contenteditable="true">${specific_concern || ''}</td>
+//         <td contenteditable="true">${concern || ''}</td>
+//         <td contenteditable="true">${intervention || ''}</td>
+//         <td contenteditable="true">${status || ''}</td>
+//         <td contenteditable="true">${remarks || ''}</td>
+//     `;
+//     document.getElementById("tableBody").appendChild(row);
 
+//     const cells = row.querySelectorAll("td");
+//     cellNav(cells);
+
+//     if (cells.length > 1 && focus) cells[1].focus();
+// }
+
+function setTableRows(data) {
+    const tableBody = document.getElementById("tableBody");
+    tableBody.innerHTML = '';
+
+    data.forEach(row => {
+        addRow(row, false);
+    });
+}
+
+function addRow(data = {}, focus = true) {
+    const tableHead = document.getElementById("tableHead");
+    const tableBody = document.getElementById("tableBody");
+    const lastRow = document.querySelector("#tableBody tr:last-child");
+    const nextRowCount = lastRow ? (parseInt(lastRow.querySelector("td")?.innerText) || 0) + 1 : 1;
+    let columns = tableHead.querySelectorAll("th");
+
+    const dataKeys = Object.keys(data);
+    if (dataKeys.length > 0 && dataKeys.length !== columns.length) {
+        // create or update table header
+        tableHead.innerHTML = `
+            <tr>
+                ${dataKeys.map(key => `<th scope="col">${key}</th>`).join('')}
+            </tr>
+        `;
+        columns = tableHead.querySelectorAll("th");
+    }
+
+    // create a blank row if no data is provided (add row clicked)
+    if (dataKeys.length === 0) {
+        data = Object.fromEntries(Array.from(columns).map((column => [column.innerText.trim(), null])));
+    }
+
+    const row = document.createElement("tr");
+    row.innerHTML = Object.keys(data).map((key, index) => {
+        if (key === "id") return `<td id="notEditable">${data[key] ?? nextRowCount}</td>`;
+        return `<td contenteditable="true">${data[key] ?? ''}</td>`;
+    }).join('');
+
+    tableBody.appendChild(row);
     const cells = row.querySelectorAll("td");
     cellNav(cells);
 
-    if (cells.length > 1 && focus) {
-        cells[1].focus();
-    }
+    if (cells.length > 1 && focus) cells[1].focus();
 }
 
 function cellNav(cells) {
@@ -68,7 +111,30 @@ function cellNav(cells) {
 
 async function populateTable() {
     // lol
-    await search();
+    await populateFileDropdown();
+    // await search('');
+}
+
+async function populateFileDropdown() {
+    try {
+        const response = await fetch('/ls');
+        const data = await response.json();
+
+        const select = document.getElementById('fileDropdown');
+        select.innerHTML = '';
+
+        data.forEach(file => {
+            const option = document.createElement('option');
+            option.value = file;
+            option.text = file;
+            select.appendChild(option);
+        });
+
+        // trigger change event to load the first file
+        if (data.length > 0) select.dispatchEvent(new Event('change'));
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 async function saveChanges() {
@@ -114,7 +180,7 @@ async function search(searchQuery = null) {
     try {
         const response = await fetch(`/search?q=${encodeURIComponent(searchInput)}`);
         if (!response.ok) console.error('Failed to fetch data');
-        
+
         const data = await response.json();
         dataTableRow.innerHTML = '';
 
@@ -124,7 +190,7 @@ async function search(searchQuery = null) {
         }
 
         data.forEach(item => {
-            addRow(item.id, item.date, item.student_id, item.level, item.program, item.guidance_service_availed, item.contact_type, item.nature_of_concern, item.specific_concern, item.concern, item.intervention, item.status, item.remarks, false);
+            addRow(item, false);
         });
     } catch (error) {
         console.error('Error:', error);
@@ -192,12 +258,27 @@ function searchEventListener() {
     document.querySelector("#tableBody").addEventListener("blur", async (event) => {
         if (event.target.tagName === "TD" && event.target.hasAttribute("contenteditable")) await saveChanges();
     }, true);
+
+    // file dropdown listener using /display
+    document.getElementById('fileDropdown').addEventListener('change', async (event) => {
+        const search = event.target.value;
+        if (!search) return;
+        try {
+            const response = await fetch(`/display?search=${search}`);
+            if (!response.ok) console.error(await response.text());
+
+            const data = await response.json();
+            setTableRows(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 }
 
 let html5QrCode;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await search();
     searchEventListener();
+    await populateTable();
     handleQRScanURL();
 });

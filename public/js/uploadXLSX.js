@@ -28,14 +28,8 @@
 //     }
 // }
 
-function firstRadioChecked() {
-    document.querySelectorAll('input[name="spreadsheetRadios"]').forEach(radio => radio.checked = false);
-    document.getElementById('infoSpreadsheet').checked = true;
-}
-
 function openUploadXLSXModal() {
     if (Dropzone.instances.length > 0) Dropzone.instances.forEach((dropzone) => dropzone.destroy());
-    firstRadioChecked();
 
     const uploadXLSXDiscardButton = document.getElementById("uploadXLSXDiscardButton");
     const uploadXLSXUploadButton = document.getElementById("uploadXLSXUploadButton");
@@ -44,6 +38,7 @@ function openUploadXLSXModal() {
 
     dropzone = new Dropzone("#uploadDropzone", {
         url: "/upload",
+        method: "post",
         paramName: "file",
         maxFiles: 1,
         maxFilesize: 4,
@@ -89,19 +84,24 @@ function openUploadXLSXModal() {
                     dzMessage.textContent = "Drop .xlsx or .xls file here to upload";
                 }
             });
+            this.on("success", function (file, response) {
+                alert("File uploaded successfully");
+                dropzone.removeFile(file);
+                dropzone.removeAllFiles(true);
+            })
         },
     });
 }
 
 function closeUploadXLSXModal() {
     dropzone.removeAllFiles(true);
-    firstRadioChecked();
 }
 
 function modalEventListener() {
     document.getElementById("uploadXLSXModal").addEventListener("shown.bs.modal", openUploadXLSXModal);
     document.getElementById("uploadXLSXModal").addEventListener("hidden.bs.modal", closeUploadXLSXModal);
     document.getElementById("uploadXLSXDiscardButton").addEventListener("click", () => dropzone.removeAllFiles(true));
+    document.getElementById("uploadXLSXUploadButton").addEventListener("click", () => dropzone.processQueue());
 }
 
 let dropzone;

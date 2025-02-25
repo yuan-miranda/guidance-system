@@ -81,23 +81,23 @@ app.post('/saveChanges', async (req, res) => {
     const data = req.body;
     const db = await dbPromise;
     try {
-        await Promise.all(data.map(async row => {
-            const [id, date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks] = row;
-            const rowExists = await db.get('SELECT id FROM StudentData WHERE id = ?', [id]);
-            if (!rowExists) {
-                await db.run(`
-                    INSERT INTO StudentData
-                    (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
-            } else {
-                await db.run(`
-                    UPDATE StudentData SET
-                    date = ?, student_id = ?, level = ?, program = ?, guidance_service_availed = ?, contact_type = ?, nature_of_concern = ?, specific_concern = ?, concern = ?, intervention = ?, status = ?, remarks = ?
-                    WHERE id = ?
-                    `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks, id]);
-            }
-        }));
+        // await Promise.all(data.map(async row => {
+        //     const [id, date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks] = row;
+        //     const rowExists = await db.get('SELECT id FROM StudentData WHERE id = ?', [id]);
+        //     if (!rowExists) {
+        //         await db.run(`
+        //             INSERT INTO StudentData
+        //             (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks)
+        //             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        //             `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
+        //     } else {
+        //         await db.run(`
+        //             UPDATE StudentData SET
+        //             date = ?, student_id = ?, level = ?, program = ?, guidance_service_availed = ?, contact_type = ?, nature_of_concern = ?, specific_concern = ?, concern = ?, intervention = ?, status = ?, remarks = ?
+        //             WHERE id = ?
+        //             `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks, id]);
+        //     }
+        // }));
         res.json({ message: 'Changes saved successfully' });
     } catch (error) {
         console.error(error);
@@ -168,18 +168,57 @@ app.delete("/delete-qr", (req, res) => {
     });
 });
 
-// uploadXLSX
-app.post("/upload", upload.single("file"), (req, res) => {
+// // uploadXLSX
+// app.post("/upload", upload.single("file"), (req, res) => {
+//     try {
+//         const filePath = path.resolve(req.file.path);
+
+//         // readFile doesnt work for some reason, so I buffer read it instead
+//         // const workbook = xlsx.readFile(filePath);
+
+//         const fileBuffer = fs.readFileSync(filePath);
+//         const workbook = xlsx.read(fileBuffer, { type: "buffer" });
+
+//         const sheetName = workbook.SheetNames[0];
+//         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+//         res.json(sheetData);
+//     } catch (error) {
+//         res.status(500).send(error.message);
+//     }
+// });
+
+// get all file names in /public/cdn/uploads
+app.get('/ls', (req, res) => {
+    const files = fs.readdirSync(path.join(__dirname, 'public/cdn/uploads'));
+    res.json(files);
+});
+
+app.post('/upload', upload.single("file"), (req, res) => {
     try {
-        const filePath = path.resolve(req.file.path);
+        res.status(200).send("File uploaded successfully");
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
-        // readFile doesnt work for some reason, so I buffer read it instead
-        // const workbook = xlsx.readFile(filePath);
+app.get('/display', async (req, res) => {
+    const { search } = req.query;
+    if (!search) return res.status(400).send("Please provide a search query");
 
+    try {
+        // search if the file exists in /public/cdn/uploads
+        const files = fs.readdirSync(path.join(__dirname, 'public/cdn/uploads'));
+        const file = files.find(f => f.includes(search));
+        if (!file) return res.status(404).send("File not found");
+    
+        // if it exists, send the xlsx in json format
+        const filePath = path.join(__dirname, 'public/cdn/uploads', file);
         const fileBuffer = fs.readFileSync(filePath);
         const workbook = xlsx.read(fileBuffer, { type: "buffer" });
-
+    
+        // currently it only reads the first sheet
         const sheetName = workbook.SheetNames[0];
+
         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
         res.json(sheetData);
     } catch (error) {
@@ -188,9 +227,10 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.post("/convert", express.json(), (req, res) => {
-    if (!req.body || !Array.isArray(req.body)) return res.status(400).send("Please provide JSON data");
+    const data = req.body;
+    if (!data || !Array.isArray(data)) return res.status(400).send("Please provide JSON data");
+
     try {
-        const data = req.body;
         const worksheet = xlsx.utils.json_to_sheet(data);
         const workbook = xlsx.utils.book_new();
         xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
