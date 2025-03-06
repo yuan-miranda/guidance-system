@@ -1,36 +1,21 @@
-// function addRow(id = null, date = null, student_id = null, level = null, program = null, guidance_service_availed = null, contact_type = null, nature_of_concern = null, specific_concern = null, concern = null, intervention = null, status = null, remarks = null, focus = true) {
-//     const row = document.createElement("tr");
-//     const nextRowCount = document.querySelectorAll("#tableBody tr").length + 1;
-//     row.innerHTML = `
-//         <td id="notEditable">${id || nextRowCount}</td>
-//         <td contenteditable="true">${date || ''}</td>
-//         <td contenteditable="true">${student_id || ''}</td>
-//         <td contenteditable="true">${level || ''}</td>
-//         <td contenteditable="true">${program || ''}</td>
-//         <td contenteditable="true">${guidance_service_availed || ''}</td>
-//         <td contenteditable="true">${contact_type || ''}</td>
-//         <td contenteditable="true">${nature_of_concern || ''}</td>
-//         <td contenteditable="true">${specific_concern || ''}</td>
-//         <td contenteditable="true">${concern || ''}</td>
-//         <td contenteditable="true">${intervention || ''}</td>
-//         <td contenteditable="true">${status || ''}</td>
-//         <td contenteditable="true">${remarks || ''}</td>
-//     `;
-//     document.getElementById("tableBody").appendChild(row);
-
-//     const cells = row.querySelectorAll("td");
-//     cellNav(cells);
-
-//     if (cells.length > 1 && focus) cells[1].focus();
-// }
-
 function setTableRows(data) {
     const tableBody = document.getElementById("tableBody");
     tableBody.innerHTML = '';
 
-    data.forEach(row => {
-        addRow(row, false);
-    });
+    data.forEach(row => addRow(row, false));
+}
+
+async function displayTable(search) {
+    try {
+        const response = await fetch(`/display?search=${search}`);
+        if (!response.ok) console.error(await response.text());
+
+        const data = await response.json();
+        tableDataBuffer = data;
+        setTableRows(data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 function addRow(data = {}, focus = true) {
@@ -102,7 +87,6 @@ function cellNav(cells) {
                     if (prevCell) prevCell.focus();
                 }
             }
-
             // move focus to the next cell if within bounds
             if (nextIndex !== null && nextIndex >= 0 && nextIndex < cells.length) cells[nextIndex].focus();
         });
@@ -112,7 +96,7 @@ function cellNav(cells) {
 async function populateTable() {
     // lol
     await populateFileDropdown();
-    // await search('');
+    search('');
 }
 
 async function populateFileDropdown() {
@@ -138,30 +122,34 @@ async function populateFileDropdown() {
 }
 
 async function saveChanges() {
-    const tableBody = document.getElementById('tableBody');
-    const rows = tableBody.querySelectorAll('tr');
+    const rows = document.querySelectorAll('#tableBody tr');
+    const headers = Array.from(document.querySelectorAll('#tableHead th')).map(th => th.innerText.trim());
 
     const data = Array.from(rows).map(row => {
         const cells = row.querySelectorAll('td');
-        return Array.from(cells).map(cell => {
-            let value = cell.innerText;
-            return value === "" ? null : value;
+        let rowData = {};
+        cells.forEach((cell, index) => {
+            rowData[headers[index]] = cell.innerText === "" ? null : cell.innerText;
         });
+        return rowData;
     });
 
+    tableDataBuffer = data;
+
     try {
-        const response = await fetch('/saveChanges', {
+        const response = await fetch('/savechanges', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify({
+                filename: document.getElementById('fileDropdown').value,
+                sheetName: 'Sheet1',
+                data
+            })
         });
 
-        if (!response.ok) {
-            console.error('Failed to save changes');
-            return;
-        }
+        if (!response.ok) return console.error('Failed to save changes');
 
         const result = await response.json();
         console.log(result);
@@ -170,33 +158,32 @@ async function saveChanges() {
     }
 }
 
-async function search(searchQuery = null) {
+function search(searchQuery = null) {
     const searchBar = document.getElementById('searchBar');
     if (searchQuery !== null) searchBar.value = searchQuery;
 
     const searchInput = searchBar.value.trim().toLowerCase();
     const dataTableRow = document.getElementById('tableBody');
 
-    try {
-        const response = await fetch(`/search?q=${encodeURIComponent(searchInput)}`);
-        if (!response.ok) console.error('Failed to fetch data');
-
-        const data = await response.json();
-        dataTableRow.innerHTML = '';
-
-        if (data.length === 0 && searchInput !== '') {
-            dataTableRow.innerHTML = '<tr><td colspan="13" id="notFound">No data found.</td></tr>';
-            return;
-        }
-
-        data.forEach(item => {
-            addRow(item, false);
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        dataTableRow.innerHTML = '<tr><td colspan="13">Failed to load data. Please try again later.</td></tr>';
+    if (!Array.isArray(tableDataBuffer) || tableDataBuffer.length === 0) {
+        dataTableRow.innerHTML = '<tr><td colspan="100%">No data available.</td></tr>';
+        return;
     }
+
+    const filteredData = tableDataBuffer.filter(row => 
+        Object.values(row).some(value => value && value.toString().toLowerCase().includes(searchInput))
+    );
+
+    dataTableRow.innerHTML = '';
+
+    if (filteredData.length === 0 && searchInput !== '') {
+        dataTableRow.innerHTML = '<tr><td colspan="100%" id="notFound">No data found.</td></tr>';
+        return;
+    }
+
+    filteredData.forEach(item => addRow(item, false));
 }
+
 
 function handleQRScanURL() {
     const searchBar = document.getElementById('searchBar');
@@ -251,31 +238,21 @@ function searchEventListener() {
     document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
     document.getElementById('closeQrScannerModalTitle').addEventListener('click', closeQrScannerModal);
     document.getElementById('closeQrScannerModalFooter').addEventListener('click', closeQrScannerModal);
-    document.getElementById('addRowButton').addEventListener('click', async () => {
-        await search('');
+    document.getElementById('addRowButton').addEventListener('click',  () => {
+        search('');
         addRow();
     });
     document.querySelector("#tableBody").addEventListener("blur", async (event) => {
         if (event.target.tagName === "TD" && event.target.hasAttribute("contenteditable")) await saveChanges();
     }, true);
-
-    // file dropdown listener using /display
     document.getElementById('fileDropdown').addEventListener('change', async (event) => {
         const search = event.target.value;
-        if (!search) return;
-        try {
-            const response = await fetch(`/display?search=${search}`);
-            if (!response.ok) console.error(await response.text());
-
-            const data = await response.json();
-            setTableRows(data);
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        if (search) await displayTable(search);
     });
 }
 
 let html5QrCode;
+let tableDataBuffer = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     searchEventListener();

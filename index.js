@@ -40,8 +40,8 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars');
 app.set('views', join(__dirname, 'views'));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
@@ -77,31 +77,44 @@ app.get('/', async (req, res) => {
     });
 });
 
-app.post('/saveChanges', async (req, res) => {
-    const data = req.body;
-    const db = await dbPromise;
+app.post('/savechanges', async (req, res) => {
+    const { filename, sheetName, data } = req.body;
+    if (!filename) return res.status(400).send("Filename is required");
+    if (!sheetName) return res.status(400).send("Sheet name is required");
+    if (!data || !Array.isArray(data)) return res.status(400).send("JSON data is required");
+
     try {
-        // await Promise.all(data.map(async row => {
-        //     const [id, date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks] = row;
-        //     const rowExists = await db.get('SELECT id FROM StudentData WHERE id = ?', [id]);
-        //     if (!rowExists) {
-        //         await db.run(`
-        //             INSERT INTO StudentData
-        //             (date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks)
-        //             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        //             `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks]);
-        //     } else {
-        //         await db.run(`
-        //             UPDATE StudentData SET
-        //             date = ?, student_id = ?, level = ?, program = ?, guidance_service_availed = ?, contact_type = ?, nature_of_concern = ?, specific_concern = ?, concern = ?, intervention = ?, status = ?, remarks = ?
-        //             WHERE id = ?
-        //             `, [date, student_id, level, program, guidance_service_availed, contact_type, nature_of_concern, specific_concern, concern, intervention, status, remarks, id]);
-        //     }
-        // }));
-        res.json({ message: 'Changes saved successfully' });
+        const worksheet = xlsx.utils.json_to_sheet(data);
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+        const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
+        fs.writeFileSync(path.join(__dirname, 'public/cdn/uploads', filename), fileBuffer);
+        console.log("Changes saved successfully");
+        res.json({ message: "Changes saved successfully" });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to save changes' });
+        res.status(500).send(error.message);
+    }
+});
+
+app.post("/convert", express.json(), (req, res) => {
+    const data = req.body;
+    if (!data || !Array.isArray(data)) return res.status(400).send("Please provide JSON data");
+
+    try {
+        const worksheet = xlsx.utils.json_to_sheet(data);
+        const workbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+        const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
+
+        fs.writeFileSync(path.join(__dirname, 'public/cdn/uploads', `${Date.now()}-converted.xlsx`), fileBuffer);
+
+        res.setHeader("Content-Disposition", "attachment; filename=converted.xlsx");
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.send(fileBuffer);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 });
 
@@ -168,27 +181,8 @@ app.delete("/delete-qr", (req, res) => {
     });
 });
 
-// // uploadXLSX
-// app.post("/upload", upload.single("file"), (req, res) => {
-//     try {
-//         const filePath = path.resolve(req.file.path);
-
-//         // readFile doesnt work for some reason, so I buffer read it instead
-//         // const workbook = xlsx.readFile(filePath);
-
-//         const fileBuffer = fs.readFileSync(filePath);
-//         const workbook = xlsx.read(fileBuffer, { type: "buffer" });
-
-//         const sheetName = workbook.SheetNames[0];
-//         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-//         res.json(sheetData);
-//     } catch (error) {
-//         res.status(500).send(error.message);
-//     }
-// });
-
-// get all file names in /public/cdn/uploads
 app.get('/ls', (req, res) => {
+    // list all files in /public/cdn/uploads
     const files = fs.readdirSync(path.join(__dirname, 'public/cdn/uploads'));
     res.json(files);
 });
@@ -226,26 +220,7 @@ app.get('/display', async (req, res) => {
     }
 });
 
-app.post("/convert", express.json(), (req, res) => {
-    const data = req.body;
-    if (!data || !Array.isArray(data)) return res.status(400).send("Please provide JSON data");
 
-    try {
-        const worksheet = xlsx.utils.json_to_sheet(data);
-        const workbook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-        const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
-
-        fs.writeFileSync(path.join(__dirname, 'public/cdn/uploads', `${Date.now()}-converted.xlsx`), fileBuffer);
-
-        res.setHeader("Content-Disposition", "attachment; filename=converted.xlsx");
-        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        res.send(fileBuffer);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
 
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);
