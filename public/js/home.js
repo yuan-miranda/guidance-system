@@ -44,7 +44,7 @@ function addRow(data = {}, focus = true) {
     const row = document.createElement("tr");
     row.innerHTML = Object.keys(data).map((key, index) => {
         if (key === "id") return `<td id="notEditable">${data[key] ?? nextRowCount}</td>`;
-        return `<td contenteditable="true">${data[key] ?? ''}</td>`;
+        return `<td contenteditable="true">${data[key] ?? '&nbsp;'}</td>`;
     }).join('');
 
     tableBody.appendChild(row);
