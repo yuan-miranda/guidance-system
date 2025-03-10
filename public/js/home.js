@@ -39,6 +39,10 @@ function addRow(data = {}, focus = true) {
     // create a blank row if no data is provided (add row clicked)
     if (dataKeys.length === 0) {
         data = Object.fromEntries(Array.from(columns).map((column => [column.innerText.trim(), null])));
+        if (columns.length > 0) {
+            const lastColumnName = columns[columns.length - 1].innerText.trim();
+            data[lastColumnName] = null;
+        }
     }
 
     const row = document.createElement("tr");
@@ -105,17 +109,38 @@ async function populateFileDropdown() {
         const data = await response.json();
 
         const select = document.getElementById('fileDropdown');
+        const downloadButton = document.getElementById('downloadFileButton');
+        const deleteButton = document.getElementById('deleteFileButton');
+        // disable search
+        const searchBar = document.getElementById('searchBar');
         select.innerHTML = '';
 
-        data.forEach(file => {
-            const option = document.createElement('option');
-            option.value = file;
-            option.text = file;
-            select.appendChild(option);
-        });
+        if (Array.isArray(data) && data.length > 0) {
+            select.disabled = false;
+            downloadButton.disabled = false;
+            deleteButton.disabled = false;
+            searchBar.disabled = false;
 
-        // trigger change event to load the first file
-        if (data.length > 0) select.dispatchEvent(new Event('change'));
+            downloadButton.removeEventListener('click', handleDownload);
+            deleteButton.removeEventListener('click', handleDelete);
+
+            downloadButton.addEventListener('click', handleDownload);
+            deleteButton.addEventListener('click', handleDelete);
+
+            data.forEach(file => {
+                const option = document.createElement('option');
+                option.value = file;
+                option.text = file;
+                select.appendChild(option);
+            });
+
+            select.dispatchEvent(new Event('change'));
+        } else {
+            select.disabled = true;
+            downloadButton.disabled = true;
+            deleteButton.disabled = true;
+            searchBar.disabled = true;
+        }
     } catch (error) {
         console.error('Error:', error);
     }
@@ -152,7 +177,6 @@ async function saveChanges() {
         if (!response.ok) return console.error('Failed to save changes');
 
         const result = await response.json();
-        console.log(result);
     } catch (error) {
         console.error('Error:', error);
     }
@@ -231,14 +255,55 @@ function keyEventListener(event) {
     }
 }
 
+async function handleDownload() {
+    const filename = document.getElementById('fileDropdown').value;
+    if (!filename) return;
+
+    try {
+        const response = await fetch(`/download?filename=${filename}`);
+        if (!response.ok) return console.error('Failed to download file');
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function handleDelete() {
+    const filename = document.getElementById('fileDropdown').value;
+    if (!filename) return;
+
+    if (confirm(`Are you sure you want to delete "${filename}"?`)) {
+        try {
+            const response = await fetch(`/delete?filename=${filename}`);
+            if (!response.ok) return console.error('Failed to delete file');
+
+            const result = await response.json();
+            await populateFileDropdown();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+}
+
 function searchEventListener() {
+    let searchTimeout;
     document.addEventListener('keydown', keyEventListener);
-    document.getElementById('searchBar').addEventListener('input', () => search());
+    document.getElementById('searchBar').addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => search(), 2000);
+    });
     document.getElementById('searchForm').addEventListener('submit', (event) => event.preventDefault());
     document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
     document.getElementById('closeQrScannerModalTitle').addEventListener('click', closeQrScannerModal);
     document.getElementById('closeQrScannerModalFooter').addEventListener('click', closeQrScannerModal);
-    document.getElementById('addRowButton').addEventListener('click',  () => {
+    document.getElementById('addRowButton').addEventListener('click', () => {
         search('');
         addRow();
     });

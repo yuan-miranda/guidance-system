@@ -45,3 +45,12 @@ th {
 video {
     border: 0.1rem solid black !important;
 }
+
+.m-1.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.m-1.d-flex select {
+    margin-right: 0.5rem;
+}

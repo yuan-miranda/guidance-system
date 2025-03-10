@@ -21,8 +21,7 @@ const storage = multer.diskStorage({
         cb(null, "public/cdn/uploads");
     },
     filename: (req, file, cb) => {
-        const date = new Date();
-        cb(null, `${date.toISOString().split("T")[0]}-${file.originalname}`);
+        cb(null, file.originalname);
     },
 });
 const upload = multer({ storage });
@@ -44,6 +43,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
+app.use("/public", express.static(join(__dirname, 'public')));
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
 app.use("/background", express.static(join(__dirname, 'public/cdn/background')));
 
@@ -95,50 +95,6 @@ app.post('/savechanges', async (req, res) => {
     } catch (error) {
         res.status(500).send(error.message);
     }
-});
-
-app.post("/convert", express.json(), (req, res) => {
-    const data = req.body;
-    if (!data || !Array.isArray(data)) return res.status(400).send("Please provide JSON data");
-
-    try {
-        const worksheet = xlsx.utils.json_to_sheet(data);
-        const workbook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-        const fileBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
-
-        fs.writeFileSync(path.join(__dirname, 'public/cdn/uploads', `${Date.now()}-converted.xlsx`), fileBuffer);
-
-        res.setHeader("Content-Disposition", "attachment; filename=converted.xlsx");
-        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        res.send(fileBuffer);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
-
-app.get('/search', async (req, res) => {
-    const { q } = req.query;
-    const db = await dbPromise;
-    const data = await db.all(`
-        SELECT * FROM StudentData 
-        WHERE id LIKE ?
-        OR date LIKE ?
-        OR student_id LIKE ?
-        OR level LIKE ?
-        OR program LIKE ?
-        OR guidance_service_availed LIKE ?
-        OR contact_type LIKE ?
-        OR nature_of_concern LIKE ?
-        OR specific_concern LIKE ?
-        OR concern LIKE ?
-        OR intervention LIKE ?
-        OR status LIKE ?
-        OR remarks LIKE ?`,
-        Array(13).fill(`%${q}%`)
-    );
-    res.json(data);
 });
 
 // generateQR
@@ -200,17 +156,14 @@ app.get('/display', async (req, res) => {
     if (!search) return res.status(400).send("Please provide a search query");
 
     try {
-        // search if the file exists in /public/cdn/uploads
         const files = fs.readdirSync(path.join(__dirname, 'public/cdn/uploads'));
         const file = files.find(f => f.includes(search));
         if (!file) return res.status(404).send("File not found");
     
-        // if it exists, send the xlsx in json format
         const filePath = path.join(__dirname, 'public/cdn/uploads', file);
         const fileBuffer = fs.readFileSync(filePath);
         const workbook = xlsx.read(fileBuffer, { type: "buffer" });
     
-        // currently it only reads the first sheet
         const sheetName = workbook.SheetNames[0];
 
         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
@@ -220,7 +173,30 @@ app.get('/display', async (req, res) => {
     }
 });
 
+app.get('/download', async (req, res) => {
+    const { filename } = req.query;
+    if (!filename) return res.status(400).send("Filename is required");
 
+    try {
+        const filePath = path.join(__dirname, 'public/cdn/uploads', filename);
+        res.download(filePath);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+app.get('/delete', async (req, res) => {
+    const { filename } = req.query;
+    if (!filename) return res.status(400).send("Filename is required");
+
+    try {
+        const filePath = path.join(__dirname, 'public/cdn/uploads', filename);
+        fs.unlinkSync(filePath);
+        res.json({ message: "File deleted successfully" });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
 
 app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`);

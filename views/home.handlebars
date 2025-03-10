@@ -1,8 +1,16 @@
 <div class="containerr">
     <div class="content">
-        <div class="m-1">
-            <select class="form-select form-select-md fw-bold" aria-label="Default select menu" id="fileDropdown">
+        <div class="m-1 d-flex">
+            <select class="form-select form-select-md fw-bold" aria-label="Default select menu" id="fileDropdown" disabled></select>
             </select>
+            <button id="downloadFileButton" disabled>
+                <img src="/public/img/download.svg" alt="download file" style="width: 1.5rem; height: 1.5rem;">
+            </button>
+            &nbsp;
+            <button id="deleteFileButton" disabled>
+                <img src="/public/img/bin.svg" alt="delete file" style="width: 1.5rem; height: 1.5rem;">
+            </button>
+            &nbsp;
         </div>
 
         <div class="table-container m-1">
