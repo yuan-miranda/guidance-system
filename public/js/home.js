@@ -55,8 +55,7 @@ function addRow(data = {}, focus = true) {
     const cells = row.querySelectorAll("td");
     cellNav(cells);
 
-    if (cells.length > 1 && focus) cells[1].focus();
-    else if (cells.length > 0 && focus) cells[0].focus();
+    if (cells.length > 0 && focus) cells[0].focus();
 }
 
 function cellNav(cells) {
