@@ -127,12 +127,17 @@ async function populateFileDropdown() {
             downloadButton.addEventListener('click', handleDownload);
             deleteButton.addEventListener('click', handleDelete);
 
+            const lastSelectedFile = localStorage.getItem('selectedFile');
+
             data.forEach(file => {
                 const option = document.createElement('option');
                 option.value = file;
                 option.text = file;
                 select.appendChild(option);
             });
+
+            if (lastSelectedFile && data.includes(lastSelectedFile)) select.value = lastSelectedFile;
+            else select.value = data[0];
 
             select.dispatchEvent(new Event('change'));
         } else {
@@ -187,35 +192,35 @@ function search(searchQuery = null) {
     if (searchQuery !== null) searchBar.value = searchQuery;
 
     const searchInput = searchBar.value.trim().toLowerCase();
-    const dataTableRow = document.getElementById('tableBody');
+    const rows = document.querySelectorAll("#tableBody tr");
 
-    if (!Array.isArray(tableDataBuffer) || tableDataBuffer.length === 0) {
-        dataTableRow.innerHTML = '<tr><td colspan="100%">No data available.</td></tr>';
-        return;
-    }
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const match = Array.from(cells).some(cell => 
+            cell.innerText && cell.innerText.toLowerCase().includes(searchInput)
+        );
 
-    const filteredData = tableDataBuffer.filter(row => 
-        Object.values(row).some(value => value && value.toString().toLowerCase().includes(searchInput))
-    );
-
-    dataTableRow.innerHTML = '';
-
-    if (filteredData.length === 0 && searchInput !== '') {
-        dataTableRow.innerHTML = '<tr><td colspan="100%" id="notFound">No data found.</td></tr>';
-        return;
-    }
-
-    filteredData.forEach(item => addRow(item, false));
+        // Show matching rows, hide non-matching ones
+        row.style.display = match ? "" : "none";
+    });
 }
-
 
 function handleQRScanURL() {
     const searchBar = document.getElementById('searchBar');
     const url = new URLSearchParams(window.location.search);
     const searchQuery = url.get('search');
     if (searchQuery) {
+        console.log("searching");
+        console.log(searchBar);
+        console.log(searchBar.value);
+        console.log(searchQuery);
+        
         searchBar.value = searchQuery;
-        search(searchQuery);
+
+        setTimeout(() => {
+            search(searchQuery);
+        }, 100);
+
         searchBar.focus();
         searchBar.setSelectionRange(searchBar.value.length, searchBar.value.length);
     }
@@ -295,7 +300,7 @@ function searchEventListener() {
     document.addEventListener('keydown', keyEventListener);
     document.getElementById('searchBar').addEventListener('input', () => {
         clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => search(), 2000);
+        searchTimeout = setTimeout(() => search(), 1000);
     });
     document.getElementById('searchForm').addEventListener('submit', (event) => event.preventDefault());
     document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
@@ -311,6 +316,7 @@ function searchEventListener() {
     document.getElementById('fileDropdown').addEventListener('change', async (event) => {
         const search = event.target.value;
         if (search) await displayTable(search);
+        localStorage.setItem('selectedFile', search);
     });
 }
 
