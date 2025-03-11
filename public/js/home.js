@@ -56,6 +56,7 @@ function addRow(data = {}, focus = true) {
     cellNav(cells);
 
     if (cells.length > 1 && focus) cells[1].focus();
+    else if (cells.length > 0 && focus) cells[0].focus();
 }
 
 function cellNav(cells) {
@@ -111,21 +112,26 @@ async function populateFileDropdown() {
         const select = document.getElementById('fileDropdown');
         const downloadButton = document.getElementById('downloadFileButton');
         const deleteButton = document.getElementById('deleteFileButton');
-        // disable search
+        const addRowButton = document.getElementById('addRowButton');
+
         const searchBar = document.getElementById('searchBar');
         select.innerHTML = '';
 
         if (Array.isArray(data) && data.length > 0) {
+            console.log("data", data);
             select.disabled = false;
             downloadButton.disabled = false;
             deleteButton.disabled = false;
             searchBar.disabled = false;
+            addRowButton.disabled = false;
 
             downloadButton.removeEventListener('click', handleDownload);
             deleteButton.removeEventListener('click', handleDelete);
+            addRowButton.removeEventListener('click', handleAddRowClick);
 
             downloadButton.addEventListener('click', handleDownload);
             deleteButton.addEventListener('click', handleDelete);
+            addRowButton.addEventListener('click', handleAddRowClick);
 
             const lastSelectedFile = localStorage.getItem('selectedFile');
 
@@ -145,6 +151,7 @@ async function populateFileDropdown() {
             downloadButton.disabled = true;
             deleteButton.disabled = true;
             searchBar.disabled = true;
+            addRowButton.disabled = true;
         }
     } catch (error) {
         console.error('Error:', error);
@@ -295,6 +302,11 @@ async function handleDelete() {
     }
 }
 
+function handleAddRowClick() {
+    search('');
+    addRow();
+}
+
 function searchEventListener() {
     let searchTimeout;
     document.addEventListener('keydown', keyEventListener);
@@ -306,10 +318,6 @@ function searchEventListener() {
     document.getElementById('qrCodeScanIcon').addEventListener('click', openQrScannerModal);
     document.getElementById('closeQrScannerModalTitle').addEventListener('click', closeQrScannerModal);
     document.getElementById('closeQrScannerModalFooter').addEventListener('click', closeQrScannerModal);
-    document.getElementById('addRowButton').addEventListener('click', () => {
-        search('');
-        addRow();
-    });
     document.querySelector("#tableBody").addEventListener("blur", async (event) => {
         if (event.target.tagName === "TD" && event.target.hasAttribute("contenteditable")) await saveChanges();
     }, true);
