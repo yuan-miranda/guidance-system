@@ -137,7 +137,8 @@ app.post('/generate-qr-multiple', upload.single("file"), async (req, res) => {
                 });
             });
         }
-
+        
+        fs.unlinkSync(file.path);
         res.json(urls);
     } catch (error) {
         console.log(error);
