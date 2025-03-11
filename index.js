@@ -97,7 +97,54 @@ app.post('/savechanges', async (req, res) => {
     }
 });
 
-// generateQR
+app.post('/generate-qr-multiple', upload.single("file"), async (req, res) => {
+    const file = req.file;
+    if (!file) {
+        return res.status(400).send("File is required");
+    }
+    if (!file.originalname.match(/\.(xls|xlsx)$/i)) {
+        return res.status(400).send("Only .xls or .xlsx files are allowed");
+    }
+
+    try {
+        const fileBuffer = fs.readFileSync(file.path);
+        const workbook = xlsx.read(fileBuffer, { type: "buffer" });
+        const sheetName = workbook.SheetNames[0];
+        const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+        const urls = [];
+        for (const row of sheetData) {
+            const text = Object.values(row)[0];
+            if (!text) continue;
+
+            const sanitizedId = text.toString().replace(/[\/\\?%*:|"<>]/g, '-');
+            const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(text)}`;
+
+            await new Promise((resolve, reject) => {
+                qrcode.toFile(`public/cdn/qr/${sanitizedId}.png`, url, {
+                    color: {
+                        dark: '#000',
+                        light: '#fff'
+                    },
+                    width: 500,
+                    margin: 2
+                }, (err) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    urls.push(`qr/${sanitizedId}.png`);
+                    resolve();
+                });
+            });
+        }
+
+        res.json(urls);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error.message);
+    }
+});
+
 app.get("/generate-qr", (req, res) => {
     const data = req.query.text;
     if (!data) {

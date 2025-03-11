@@ -283,9 +283,7 @@ async function handleDelete() {
         try {
             const response = await fetch(`/delete?filename=${filename}`);
             if (!response.ok) return console.error('Failed to delete file');
-
-            const result = await response.json();
-            await populateFileDropdown();
+            window.location.href = '/';
         } catch (error) {
             console.error('Error:', error);
         }

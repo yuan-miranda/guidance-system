@@ -54,3 +54,7 @@ video {
 .m-1.d-flex select {
     margin-right: 0.5rem;
 }
+
+#qrImagePreviewMultiple {
+    display: none;
+}

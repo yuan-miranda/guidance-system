@@ -55,7 +55,6 @@ function openUploadXLSXModal() {
                 }
             });
             this.on("success", function (file, response) {
-                alert("File uploaded successfully");
                 dropzone.removeFile(file);
                 dropzone.removeAllFiles(true);
                 window.location.href = "/";
