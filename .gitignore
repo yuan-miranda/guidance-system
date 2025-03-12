@@ -1,3 +1,4 @@
 node_modules
 database.db
-public/cdn
+public/cdn/qr/*
+public/cdn/uploads/*
