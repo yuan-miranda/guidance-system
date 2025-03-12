@@ -117,7 +117,6 @@ async function populateFileDropdown() {
         select.innerHTML = '';
 
         if (Array.isArray(data) && data.length > 0) {
-            console.log("data", data);
             select.disabled = false;
             downloadButton.disabled = false;
             deleteButton.disabled = false;
@@ -216,11 +215,6 @@ function handleQRScanURL() {
     const url = new URLSearchParams(window.location.search);
     const searchQuery = url.get('search');
     if (searchQuery) {
-        console.log("searching");
-        console.log(searchBar);
-        console.log(searchBar.value);
-        console.log(searchQuery);
-        
         searchBar.value = searchQuery;
 
         setTimeout(() => {

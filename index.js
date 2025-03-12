@@ -137,11 +137,11 @@ app.post('/generate-qr-multiple', upload.single("file"), async (req, res) => {
                 });
             });
         }
-        
+
         fs.unlinkSync(file.path);
         res.json(urls);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).send(error.message);
     }
 });
@@ -207,15 +207,21 @@ app.get('/display', async (req, res) => {
         const files = fs.readdirSync(path.join(__dirname, 'public/cdn/uploads'));
         const file = files.find(f => f.includes(search));
         if (!file) return res.status(404).send("File not found");
-    
+
         const filePath = path.join(__dirname, 'public/cdn/uploads', file);
         const fileBuffer = fs.readFileSync(filePath);
         const workbook = xlsx.read(fileBuffer, { type: "buffer" });
-    
-        const sheetName = workbook.SheetNames[0];
 
-        const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        res.json(sheetData);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        // convert to JSON
+        let sheetData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+        if (sheetData.length === 1) sheetData.push(new Array(sheetData[0].length).fill(null));
+
+        let formattedData = sheetData.slice(1).map(row => Object.fromEntries(sheetData[0].map((key, index) => [key, row[index] || null])));
+
+        res.json(formattedData);
     } catch (error) {
         res.status(500).send(error.message);
     }
