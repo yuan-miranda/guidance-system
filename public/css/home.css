@@ -63,3 +63,8 @@ video {
 #deleteColumn:hover {
     background-color: #d3d3d3;
 }
+
+#addColumnLeft:hover,
+#addColumnRight:hover {
+    background-color: #d3d3d3;
+}

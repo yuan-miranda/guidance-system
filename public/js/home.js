@@ -18,6 +18,37 @@ async function displayTable(search) {
     }
 }
 
+function addColumn(referenceCell, position = "right") {
+    if (!referenceCell) return;
+
+    const columnIndex = Array.from(referenceCell.parentNode.children).indexOf(referenceCell);
+    const tableHead = document.getElementById("tableHead");
+    const tableBody = document.getElementById("tableBody");
+
+    if (columnIndex === -1) return;
+
+    const columnName = prompt("Enter column name:");
+    if (!columnName) return;
+
+    const newHeader = document.createElement("th");
+    newHeader.innerText = columnName;
+
+    const headerRow = tableHead.querySelector("tr");
+    if (headerRow) {
+        if (position === "left") headerRow.insertBefore(newHeader, referenceCell);
+        else headerRow.insertBefore(newHeader, referenceCell.nextElementSibling);
+    }
+
+    Array.from(tableBody.querySelectorAll("tr")).forEach(row => {
+        const newCell = document.createElement("td");
+        newCell.contentEditable = true;
+        newCell.innerText = "&nbsp;";
+        row.insertBefore(newCell, row.children[columnIndex + 1]);
+    });
+
+    saveChanges();
+}
+
 function addRow(data = {}, focus = true) {
     const tableHead = document.getElementById("tableHead");
     const tableBody = document.getElementById("tableBody");
@@ -193,8 +224,17 @@ async function saveChanges() {
 function removeRow(row) {
     if (!row) return;
 
-    const rowIndex = Array.from(document.querySelectorAll("#tableBody tr")).indexOf(row);
+    const tableBody = document.getElementById("tableBody");
+    const rows = tableBody.querySelectorAll("tr");
+    
+    // if only one row, clear the row instead of deleting it
+    if (rows.length === 1) {
+        Array.from(row.children).forEach(cell => (cell.innerHTML = '&nbsp;'));
+        saveChanges();
+        return;
+    }
 
+    const rowIndex = Array.from(rows).indexOf(row);
     if (!confirm("Are you sure you want to delete this row?")) return;
 
     row.remove();
@@ -209,20 +249,31 @@ function removeColumn(cell) {
     const columnIndex = Array.from(cell.parentNode.children).indexOf(cell);
     const tableHead = document.getElementById("tableHead");
     const tableBody = document.getElementById("tableBody");
+    const headerRow = tableHead.querySelector("tr");
+    const totalColumns = headerRow ? headerRow.children.length : 0;
 
     if (columnIndex === -1) return;
+
+    if (totalColumns === 1) {
+        const newColumnName = prompt("You cannot delete the last column. Please enter a new name:");
+        if (newColumnName) headerRow.children[0].innerText = newColumnName;
+        Array.from(tableBody.querySelectorAll("tr")).forEach(row => row.children[0].innerHTML = "&nbsp;");
+        saveChanges();
+        return;
+    }
+
     if (!confirm("Are you sure you want to delete this column?")) return;
 
-    const headerRow = tableHead.querySelector("tr");
     if (headerRow) headerRow.removeChild(headerRow.children[columnIndex]);
-
     Array.from(tableBody.querySelectorAll("tr")).forEach(row => row.removeChild(row.children[columnIndex]));
+
     saveChanges();
 }
 
+
 function createContextMenu() {
     const menu = document.createElement("div");
-    menu.id = "customContextMenu";
+    menu.id = "contextMenu";
     menu.style.position = "absolute";
     menu.style.display = "none";
     menu.style.background = "white";
@@ -239,19 +290,39 @@ function createContextMenu() {
 
     let selectedCell = null;
 
-    // show menu on right click
+    // show context menu on right click
     document.getElementById("tableBody").addEventListener("contextmenu", function (event) {
         event.preventDefault();
         selectedCell = event.target;
 
         if (selectedCell.tagName !== "TD") return;
 
-        menu.style.top = `${event.pageY}px`;
-        menu.style.left = `${event.pageX}px`;
+        document.getElementById("headerContextMenu").style.display = "none";
+
+        menu.style.display = "block";
+        const menuWidth = menu.offsetWidth;
+        const menuHeight = menu.offsetHeight;
+        menu.style.display = "none";
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let left = event.pageX;
+        let top = event.pageY;
+
+        if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 10;
+        if (top + menuHeight > viewportHeight) top = viewportHeight - menuHeight - 10;
+
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
         menu.style.display = "block";
     });
 
-    // hide menu on click outside
+    menu.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+    });
+
+    // hide context menu when clicking outside
     document.addEventListener("click", function () {
         menu.style.display = "none";
     });
@@ -263,6 +334,72 @@ function createContextMenu() {
 
     document.getElementById("deleteColumn").addEventListener("click", function () {
         if (selectedCell) removeColumn(selectedCell);
+        menu.style.display = "none";
+    });
+}
+
+function createHeaderContextMenu() {
+    const menu = document.createElement("div");
+    menu.id = "headerContextMenu";
+    menu.style.position = "absolute";
+    menu.style.display = "none";
+    menu.style.background = "white";
+    menu.style.border = "1px solid #ccc";
+    menu.style.boxShadow = "2px 2px 10px rgba(0,0,0,0.2)";
+    menu.style.zIndex = "1000";
+    menu.innerHTML = `
+        <ul style="list-style: none; padding: 0.1em; margin: 0; cursor: pointer;">
+            <li id="addColumnLeft" style="cursor: pointer; padding: 5px;">Add Column Left</li>
+            <li id="addColumnRight" style="cursor: pointer; padding: 5px;">Add Column Right</li>
+        </ul>
+    `;
+    document.body.appendChild(menu);
+
+    let selectedHeader = null;
+
+    document.getElementById("tableHead").addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+        selectedHeader = event.target;
+
+        if (selectedHeader.tagName !== "TH") return;
+
+        document.getElementById("contextMenu").style.display = "none";
+
+        menu.style.display = "block";
+        const menuWidth = menu.offsetWidth;
+        const menuHeight = menu.offsetHeight;
+        menu.style.display = "none";
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let left = event.pageX;
+        let top = event.pageY;
+
+        if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth - 10;
+        if (top + menuHeight > viewportHeight) top = viewportHeight - menuHeight - 10;
+
+        menu.style.top = `${top}px`;
+        menu.style.left = `${left}px`;
+        menu.style.display = "block";
+    });
+
+    menu.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+    });
+
+    // hide context menu when clicking outside
+    document.addEventListener("click", function () {
+        menu.style.display = "none";
+    });
+
+    document.getElementById("addColumnLeft").addEventListener("click", function () {
+        if (selectedHeader) addColumn(selectedHeader, "left");
+        menu.style.display = "none";
+    });
+
+    document.getElementById("addColumnRight").addEventListener("click", function () {
+        if (selectedHeader) addColumn(selectedHeader, "right");
         menu.style.display = "none";
     });
 }
@@ -403,4 +540,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     handleQRScanURL();
 
     createContextMenu();
+    createHeaderContextMenu();
 });
