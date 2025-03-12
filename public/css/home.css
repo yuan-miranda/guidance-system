@@ -58,3 +58,8 @@ video {
 #qrImagePreviewMultiple {
     display: none;
 }
+
+#deleteRow:hover,
+#deleteColumn:hover {
+    background-color: #d3d3d3;
+}

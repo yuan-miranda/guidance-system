@@ -185,11 +185,86 @@ async function saveChanges() {
         });
 
         if (!response.ok) return console.error('Failed to save changes');
-
-        const result = await response.json();
     } catch (error) {
         console.error('Error:', error);
     }
+}
+
+function removeRow(row) {
+    if (!row) return;
+
+    const rowIndex = Array.from(document.querySelectorAll("#tableBody tr")).indexOf(row);
+
+    if (!confirm("Are you sure you want to delete this row?")) return;
+
+    row.remove();
+    if (rowIndex > -1) tableDataBuffer.splice(rowIndex, 1);
+
+    saveChanges();
+}
+
+function removeColumn(cell) {
+    if (!cell) return;
+
+    const columnIndex = Array.from(cell.parentNode.children).indexOf(cell);
+    const tableHead = document.getElementById("tableHead");
+    const tableBody = document.getElementById("tableBody");
+
+    if (columnIndex === -1) return;
+    if (!confirm("Are you sure you want to delete this column?")) return;
+
+    const headerRow = tableHead.querySelector("tr");
+    if (headerRow) headerRow.removeChild(headerRow.children[columnIndex]);
+
+    Array.from(tableBody.querySelectorAll("tr")).forEach(row => row.removeChild(row.children[columnIndex]));
+    saveChanges();
+}
+
+function createContextMenu() {
+    const menu = document.createElement("div");
+    menu.id = "customContextMenu";
+    menu.style.position = "absolute";
+    menu.style.display = "none";
+    menu.style.background = "white";
+    menu.style.border = "1px solid #ccc";
+    menu.style.boxShadow = "2px 2px 10px rgba(0,0,0,0.2)";
+    menu.style.zIndex = "1000";
+    menu.innerHTML = `
+        <ul style="list-style: none; padding: 0.1em; margin: 0; cursor: pointer;">
+            <li id="deleteRow" style="cursor: pointer; padding: 5px;">Delete Row</li>
+            <li id="deleteColumn" style="cursor: pointer; padding: 5px;">Delete Column</li>
+        </ul>
+    `;
+    document.body.appendChild(menu);
+
+    let selectedCell = null;
+
+    // show menu on right click
+    document.getElementById("tableBody").addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+        selectedCell = event.target;
+
+        if (selectedCell.tagName !== "TD") return;
+
+        menu.style.top = `${event.pageY}px`;
+        menu.style.left = `${event.pageX}px`;
+        menu.style.display = "block";
+    });
+
+    // hide menu on click outside
+    document.addEventListener("click", function () {
+        menu.style.display = "none";
+    });
+
+    document.getElementById("deleteRow").addEventListener("click", function () {
+        if (selectedCell) removeRow(selectedCell.closest("tr"));
+        menu.style.display = "none";
+    });
+
+    document.getElementById("deleteColumn").addEventListener("click", function () {
+        if (selectedCell) removeColumn(selectedCell);
+        menu.style.display = "none";
+    });
 }
 
 function search(searchQuery = null) {
@@ -204,8 +279,6 @@ function search(searchQuery = null) {
         const match = Array.from(cells).some(cell => 
             cell.innerText && cell.innerText.toLowerCase().includes(searchInput)
         );
-
-        // Show matching rows, hide non-matching ones
         row.style.display = match ? "" : "none";
     });
 }
@@ -328,4 +401,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     searchEventListener();
     await populateTable();
     handleQRScanURL();
+
+    createContextMenu();
 });
