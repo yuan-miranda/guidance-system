@@ -42,8 +42,8 @@ function addColumn(referenceCell, position = "right") {
     Array.from(tableBody.querySelectorAll("tr")).forEach(row => {
         const newCell = document.createElement("td");
         newCell.contentEditable = true;
-        newCell.innerText = "&nbsp;";
-        row.insertBefore(newCell, row.children[columnIndex + 1]);
+        newCell.innerHTML = "&nbsp;";
+        row.insertBefore(newCell, row.children[position === "left" ? columnIndex : columnIndex + 1]);
     });
 
     saveChanges();
@@ -53,7 +53,6 @@ function addRow(data = {}, focus = true) {
     const tableHead = document.getElementById("tableHead");
     const tableBody = document.getElementById("tableBody");
     const lastRow = document.querySelector("#tableBody tr:last-child");
-    const nextRowCount = lastRow ? (parseInt(lastRow.querySelector("td")?.innerText) || 0) + 1 : 1;
     let columns = tableHead.querySelectorAll("th");
 
     const dataKeys = Object.keys(data);
@@ -78,7 +77,6 @@ function addRow(data = {}, focus = true) {
 
     const row = document.createElement("tr");
     row.innerHTML = Object.keys(data).map((key, index) => {
-        if (key === "id") return `<td id="notEditable">${data[key] ?? nextRowCount}</td>`;
         return `<td contenteditable="true">${data[key] ?? '&nbsp;'}</td>`;
     }).join('');
 
