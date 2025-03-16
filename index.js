@@ -44,8 +44,13 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use("/node_modules", express.static(join(__dirname, 'node_modules')));
 app.use("/public", express.static(join(__dirname, 'public')));
+
+// creaye directories if they don't exist
+if (!fs.existsSync(join(__dirname, 'public/cdn'))) fs.mkdirSync(join(__dirname, 'public/cdn'));
+if (!fs.existsSync(join(__dirname, 'public/cdn/uploads'))) fs.mkdirSync(join(__dirname, 'public/cdn/uploads'));
+if (!fs.existsSync(join(__dirname, 'public/cdn/qr'))) fs.mkdirSync(join(__dirname, 'public/cdn/qr'));
+
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
-app.use("/background", express.static(join(__dirname, 'public/cdn/background')));
 
 // home
 app.get('/', async (req, res) => {
