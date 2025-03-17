@@ -543,7 +543,7 @@ function isLoggedIn() {
 
     if (!token) {
         tableContainer.classList.add('blurred');
-        fileDropdown.disabled = true;
+        fileDropdown.classList.add('blurred');
         addRowButton.disabled = true;
         downloadFileButton.disabled = true;
         deleteFileButton.disabled = true;
