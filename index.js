@@ -10,6 +10,9 @@ import multer from 'multer';
 import fs from 'fs';
 import xlsx from 'xlsx';
 
+const adminUsername = "julieann.delara@baliuag.sti.edu";
+const adminPassword = "yYUA8g";
+
 const app = express();
 const port = 3000;
 
