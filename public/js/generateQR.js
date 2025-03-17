@@ -4,7 +4,8 @@ function generateQR() {
         return;
     }
     const text = document.getElementById('text').value;
-    fetch(`/generate-qr?text=${encodeURIComponent(text)}`)
+    const name = document.getElementById('name').value || text;
+    fetch(`/generate-qr?text=${encodeURIComponent(text)}&name=${encodeURIComponent(name)}`)
         .then(response => response.json())
         .then(data => {
             const qrImagePreview = document.getElementById('qrImagePreview');
@@ -14,7 +15,7 @@ function generateQR() {
             generateQRDownloadButton.disabled = false;
 
             qrImagePreview.innerHTML = `
-                <img src="${data.url}" alt="${data.url}" style="max-width: 100%; height: auto;">
+                <img src="${data.url}?t=${new Date().getTime()}" alt="${data.url}" style="max-width: 100%; height: auto;">
             `;
         })
         .catch(error => console.error(error));

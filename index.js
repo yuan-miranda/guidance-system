@@ -9,6 +9,8 @@ import qrcode from 'qrcode';
 import multer from 'multer';
 import fs from 'fs';
 import xlsx from 'xlsx';
+import { createCanvas, loadImage } from 'canvas';
+import sharp from 'sharp';
 
 const adminUsername = "julieann.delara@baliuag.sti.edu";
 const adminPassword = "yYUA8g";
@@ -152,28 +154,44 @@ app.post('/generate-qr-multiple', upload.single("file"), async (req, res) => {
 
         const urls = [];
         for (const row of sheetData) {
-            const text = Object.values(row)[0];
+            const values = Object.values(row);
+            if (!values.length) continue;
+
+            const text = values[0].toString();
             if (!text) continue;
 
-            const sanitizedId = text.toString().replace(/[\/\\?%*:|"<>]/g, '-');
-            const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(text)}`;
+            const name = values[1] ? values[1].toString() : text;
 
-            await new Promise((resolve, reject) => {
-                qrcode.toFile(`public/cdn/qr/${sanitizedId}.png`, url, {
-                    color: {
-                        dark: '#000',
-                        light: '#fff'
-                    },
-                    width: 500,
-                    margin: 2
-                }, (err) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    urls.push(`qr/${sanitizedId}.png`);
-                    resolve();
-                });
+            const sanitizedId = text.replace(/[\/\\?%*:|"<>]/g, '-');
+            const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(text)}`;
+            const qrPath = `public/cdn/qr/${sanitizedId}.png`;
+
+            await qrcode.toFile(qrPath, url, {
+                color: { dark: "#000", light: "#fff" },
+                width: 500,
+                margin: 2
             });
+
+            const qrImage = await loadImage(qrPath);
+            const qrWidth = qrImage.width;
+            const qrHeight = qrImage.height;
+            const textHeight = 50;
+
+            const canvas = createCanvas(qrWidth, qrHeight + textHeight);
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, qrWidth, qrHeight + textHeight);
+            ctx.drawImage(qrImage, 0, 0, qrWidth, qrHeight);
+            ctx.fillStyle = '#000';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, qrWidth / 2, qrHeight + 10);
+
+            const out = fs.createWriteStream(qrPath);
+            const stream = canvas.createPNGStream();
+            stream.pipe(out);
+            urls.push(`qr/${sanitizedId}.png`);
         }
 
         fs.unlinkSync(file.path);
@@ -184,28 +202,50 @@ app.post('/generate-qr-multiple', upload.single("file"), async (req, res) => {
     }
 });
 
-app.get("/generate-qr", (req, res) => {
+app.get("/generate-qr", async (req, res) => {
     const data = req.query.text;
+    const name = req.query.name || data;
     if (!data) {
         return res.status(400).send("Text query parameter is required");
     }
 
     const sanitizedData = data.replace(/[\/\\?%*:|"<>]/g, '-');
-    const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(data)}`
+    const url = `${req.protocol}://${req.get('host')}/?search=${encodeURIComponent(data)}`;
+    const qrPath = path.join(__dirname, 'public/cdn/qr', `${sanitizedData}.png`);
 
-    qrcode.toFile(`public/cdn/qr/${sanitizedData}.png`, url, {
-        color: {
-            dark: '#000',
-            light: '#fff'
-        },
-        width: 500,
-        margin: 2
-    }, (err) => {
-        if (err) {
-            return res.status(500).send("Error generating QR code");
-        }
-        res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
-    });
+    try {
+        await qrcode.toFile(qrPath, url, {
+            color: { dark: "#000", light: "#fff" },
+            width: 500,
+            margin: 2
+        });
+
+        const qrImage = await loadImage(qrPath);
+        const qrWidth = qrImage.width;
+        const qrHeight = qrImage.height;
+        const textHeight = 50;
+
+        const canvas = createCanvas(qrWidth, qrHeight + textHeight);
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, qrWidth, qrHeight + textHeight);
+        ctx.drawImage(qrImage, 0, 0, qrWidth, qrHeight);
+        ctx.fillStyle = '#000';
+        ctx.font = '32px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, qrWidth / 2, qrHeight + 10);
+
+        const out = fs.createWriteStream(qrPath);
+        const stream = canvas.createPNGStream();
+        stream.pipe(out);
+        out.on('finish', () => {
+            res.json({ message: "QR code generated", url: `qr/${sanitizedData}.png` });
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error generating QR code with text");
+    }
 });
 
 app.delete("/delete-qr", (req, res) => {

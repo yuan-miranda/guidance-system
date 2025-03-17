@@ -30,7 +30,9 @@
             <div class="modal-body">
 
                 <div class="input-group mb-3" id="generateQRSingle" class="d-none">
-                    <input type="text" class="form-control" id="text" placeholder="Enter text to generate QR code"
+                    <input type="text" class="form-control" id="text" placeholder="ID, URL, etc."
+                        aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <input type="text" class="form-control" id="name" placeholder="Name (optional)"
                         aria-label="Recipient's username" aria-describedby="button-addon2">
                     <button class="btn btn-outline-secondary" type="button" id="button-addon2">Generate QR</button>
                     <div id="qrImagePreview"></div>
