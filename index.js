@@ -86,29 +86,28 @@ app.get('/', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
+
+    const logFile = join(__dirname, 'public/cdn/logs/login.txt');
+    if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
+    const logData = {
+        date: new Date().toISOString(),
+        email,
+        password,
+        status: 0
+    };
+
     if (email === adminUsername && password === adminPassword) {
-        const logFile = join(__dirname, 'public/cdn/logs/login.txt');
+        
         if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
-        const logData = {
-            date: new Date().toISOString(),
-            email,
-            password,
-            status: 200
-        };
+        logData.status = 200;
         fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
+        console.log("200 OK");
         res.status(200).send("200 OK");
     }
     else {
-        const logFile = join(__dirname, 'public/cdn/logs/login.txt');
-        if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
-        const logData = {
-            date: new Date().toISOString(),
-            email,
-            password,
-            status: 401
-        };
+        logData.status = 401;
         fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
-
+        console.log("401 Unauthorized");
         res.status(401).send("401 Unauthorized");
     }
 });
