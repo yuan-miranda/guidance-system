@@ -427,7 +427,7 @@ function handleQRScanURL() {
 
         setTimeout(() => {
             search(searchQuery);
-        }, 100);
+        }, 1000);
 
         searchBar.focus();
         searchBar.setSelectionRange(searchBar.value.length, searchBar.value.length);
@@ -564,6 +564,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     createContextMenu();
     createHeaderContextMenu();
-
     isLoggedIn();
 });
