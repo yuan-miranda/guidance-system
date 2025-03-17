@@ -2,3 +2,4 @@ node_modules
 database.db
 public/cdn/qr/*
 public/cdn/uploads/*
+public/cdn/logs/*

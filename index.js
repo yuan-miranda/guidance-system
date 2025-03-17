@@ -10,6 +10,9 @@ import multer from 'multer';
 import fs from 'fs';
 import xlsx from 'xlsx';
 
+const adminUsername = "julieann.delara@baliuag.sti.edu";
+const adminPassword = "yYUA8g";
+
 const app = express();
 const port = 3000;
 
@@ -49,6 +52,7 @@ app.use("/public", express.static(join(__dirname, 'public')));
 if (!fs.existsSync(join(__dirname, 'public/cdn'))) fs.mkdirSync(join(__dirname, 'public/cdn'));
 if (!fs.existsSync(join(__dirname, 'public/cdn/uploads'))) fs.mkdirSync(join(__dirname, 'public/cdn/uploads'));
 if (!fs.existsSync(join(__dirname, 'public/cdn/qr'))) fs.mkdirSync(join(__dirname, 'public/cdn/qr'));
+if (!fs.existsSync(join(__dirname, 'public/cdn/logs'))) fs.mkdirSync(join(__dirname, 'public/cdn/logs'));
 
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
 
@@ -77,9 +81,39 @@ app.get('/', async (req, res) => {
         scripts: [
             'js/home.js',
             'js/generateQR.js',
-            'js/uploadXLSX.js'
+            'js/uploadXLSX.js',
+            'js/login.js',
         ],
     });
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    if (email === adminUsername && password === adminPassword) {
+        const logFile = join(__dirname, 'public/cdn/logs/login.txt');
+        if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
+        const logData = {
+            date: new Date().toISOString(),
+            email,
+            password,
+            status: 200
+        };
+        fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
+        res.status(200).send("200 OK");
+    }
+    else {
+        const logFile = join(__dirname, 'public/cdn/logs/login.txt');
+        if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
+        const logData = {
+            date: new Date().toISOString(),
+            email,
+            password,
+            status: 401
+        };
+        fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
+
+        res.status(401).send("401 Unauthorized");
+    }
 });
 
 app.post('/savechanges', async (req, res) => {

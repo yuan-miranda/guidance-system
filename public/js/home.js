@@ -529,6 +529,31 @@ function searchEventListener() {
     });
 }
 
+function isLoggedIn() {
+    const token = localStorage.getItem('token');
+    const tableContainer = document.querySelector('.table-container');
+    const fileDropdown = document.getElementById('fileDropdown');
+    const addRowButton = document.getElementById('addRowButton');
+    const downloadFileButton = document.getElementById('downloadFileButton');
+    const deleteFileButton = document.getElementById('deleteFileButton');
+    const searchBar = document.getElementById('searchBar');
+    const uploadXLSXLink = document.querySelector('a[data-bs-target="#uploadXLSXModal"]');
+    const generateQRLink = document.querySelector('a[data-bs-target="#generateQRModal"]');
+    const qrCodeScanIcon = document.querySelector('.qr-code-scan-icon');
+
+    if (!token) {
+        tableContainer.classList.add('blurred');
+        fileDropdown.disabled = true;
+        addRowButton.disabled = true;
+        downloadFileButton.disabled = true;
+        deleteFileButton.disabled = true;
+        searchBar.disabled = true;
+        uploadXLSXLink.classList.add('disabled');
+        generateQRLink.classList.add('disabled');
+        qrCodeScanIcon.style.pointerEvents = 'none';
+    }
+}
+
 let html5QrCode;
 let tableDataBuffer = [];
 
@@ -539,4 +564,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     createContextMenu();
     createHeaderContextMenu();
+
+    isLoggedIn();
 });

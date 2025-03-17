@@ -36,6 +36,12 @@ body {
     background-color: #0B5793 !important;
 }
 
+
+.blurred {
+    filter: blur(30px);
+    pointer-events: none;
+}
+
 /* Credit: https://stackoverflow.com/a/7354648
  */
 @media (max-width:320px) {
