@@ -3,3 +3,4 @@ database.db
 public/cdn/qr/*
 public/cdn/uploads/*
 public/cdn/logs/*
+public/cdn/su/*

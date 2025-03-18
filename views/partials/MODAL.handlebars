@@ -114,8 +114,34 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="manageAdminButton">Manage Users</button>
                 <button type="button" class="btn btn-secondary" id="loginDiscardButton">Discard</button>
                 <button type="button" class="btn btn-primary" id="loginSubmitButton">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="manageAdminModal" tabindex="-1" aria-labelledby="manageAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="manageAdminModalLabel">Manage Users</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Superusers</h5>
+                <ul id="superuserList" class="list-group mb-3"></ul>
+
+                <h5>Add New Superuser</h5>
+                <div class="input-group">
+                    <input type="email" id="newSuperuserEmail" class="form-control" placeholder="Enter email" required>
+                    <input type="password" id="newSuperuserPassword" class="form-control" placeholder="Enter password" required>
+                    <button class="btn btn-success" id="addSuperuserButton">Add</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

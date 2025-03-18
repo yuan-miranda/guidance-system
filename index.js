@@ -10,10 +10,6 @@ import multer from 'multer';
 import fs from 'fs';
 import xlsx from 'xlsx';
 import { createCanvas, loadImage } from 'canvas';
-import sharp from 'sharp';
-
-const adminUsername = "julieann.delara@baliuag.sti.edu";
-const adminPassword = "yYUA8g";
 
 const app = express();
 const port = 3000;
@@ -55,8 +51,21 @@ if (!fs.existsSync(join(__dirname, 'public/cdn'))) fs.mkdirSync(join(__dirname, 
 if (!fs.existsSync(join(__dirname, 'public/cdn/uploads'))) fs.mkdirSync(join(__dirname, 'public/cdn/uploads'));
 if (!fs.existsSync(join(__dirname, 'public/cdn/qr'))) fs.mkdirSync(join(__dirname, 'public/cdn/qr'));
 if (!fs.existsSync(join(__dirname, 'public/cdn/logs'))) fs.mkdirSync(join(__dirname, 'public/cdn/logs'));
+if (!fs.existsSync(join(__dirname, 'public/cdn/su/'))) fs.mkdirSync(join(__dirname, 'public/cdn/su/'));
+
+const logFile = join(__dirname, 'public/cdn/logs/login.txt');
+const superusersFile = join(__dirname, 'public/cdn/su/superusers.json');
+
+if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
+if (!fs.existsSync(superusersFile)) fs.writeFileSync(superusersFile, JSON.stringify({ superusers: [] }));
+
+const getSuperusers = () => {
+    const data = fs.readFileSync(superusersFile);
+    return JSON.parse(data).superusers || [];
+}
 
 app.use("/qr", express.static(join(__dirname, 'public/cdn/qr')));
+app.use("/su", express.static(join(__dirname, 'public/cdn/su')));
 
 // home
 app.get('/', async (req, res) => {
@@ -92,29 +101,66 @@ app.get('/', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    const logFile = join(__dirname, 'public/cdn/logs/login.txt');
-    if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email && u.password === password);
+
     const logData = {
         date: new Date().toISOString(),
         email,
         password,
-        status: 0
+        status: user ? 200 : 401
     };
+    fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
 
-    if (email === adminUsername && password === adminPassword) {
-        
-        if (!fs.existsSync(logFile)) fs.writeFileSync(logFile, '');
-        logData.status = 200;
-        fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
-        console.log("200 OK");
-        res.status(200).send("200 OK");
-    }
-    else {
-        logData.status = 401;
-        fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
-        console.log("401 Unauthorized");
-        res.status(401).send("401 Unauthorized");
-    }
+    if (user) res.status(200).send("200 OK");
+    else res.status(401).send("401 Unauthorized");
+});
+
+app.post('/changepasswd', async (req, res) => {
+    const { email, password } = req.body;
+
+    const usersData = getSuperusers();
+    const userIndex = usersData.findIndex(u => u.email === email);
+
+    if (userIndex === -1) return res.status(404).send("User not found");
+
+    usersData[userIndex].password = password;
+    fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
+
+    res.status(200).send("200 OK");
+});
+
+app.post('/addsuperuser', async (req, res) => {
+    const { email, password } = req.body;
+
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email);
+
+    if (user) return res.status(409).send("User already exists");
+
+    usersData.push({ email, password });
+    fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
+
+    res.status(200).send("200 OK");
+});
+
+app.delete('/deletesuperuser', async (req, res) => {
+    const { email } = req.query;
+
+    const usersData = getSuperusers();
+    const userIndex = usersData.findIndex(u => u.email === email);
+
+    if (userIndex === -1) return res.status(404).send("User not found");
+
+    usersData.splice(userIndex, 1);
+    fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
+
+    res.status(200).send("200 OK");
+});
+
+app.get('/getsuperusers', async (req, res) => {
+    const usersData = getSuperusers();
+    res.json(usersData);
 });
 
 app.post('/savechanges', async (req, res) => {
