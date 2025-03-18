@@ -125,7 +125,7 @@ function loginEventListener() {
                 superuserList.appendChild(li);
             });
 
-\            addSuperuserButton.addEventListener('click', async () => {
+            addSuperuserButton.addEventListener('click', async () => {
                 const email = newSuperuserEmail.value;
                 const password = newSuperuserPassword.value;
 
