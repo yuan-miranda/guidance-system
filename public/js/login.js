@@ -59,8 +59,6 @@ async function login() {
 function clearLoginInputs() {
     document.getElementById('loginEmail').value = '';
     document.getElementById('loginPassword').value = '';
-    document.getElementById('loginDiscardButton').disabled = true;
-    document.getElementById('loginSubmitButton').disabled = true;
 }
 
 function openLoginModal() {
@@ -72,39 +70,92 @@ function openLoginModal() {
     loginEmail.focus();
 }
 
-
-// <div class="modal fade" id="manageAdminModal" tabindex="-1" aria-labelledby="manageAdminModalLabel" aria-hidden="true">
-//     <div class="modal-dialog modal-dialog-centered">
-//         <div class="modal-content">
-//             <div class="modal-header">
-//                 <h1 class="modal-title fs-5" id="manageAdminModalLabel">Manage Users</h1>
-//                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//             </div>
-//             <div class="modal-body">
-//                 <h5>Superusers</h5>
-//                 <ul id="superuserList" class="list-group mb-3"></ul>
-
-//                 <h5>Add New Superuser</h5>
-//                 <div class="input-group">
-//                     <input type="email" id="newSuperuserEmail" class="form-control" placeholder="Enter email" required>
-//                     <input type="password" id="newSuperuserPassword" class="form-control" placeholder="Enter password" required>
-//                     <button class="btn btn-success" id="addSuperuserButton">Add</button>
-//                 </div>
-//             </div>
-//             <div class="modal-footer">
-//                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-//             </div>
-//         </div>
-//     </div>
-// </div>
-
-
 function loginEventListener() {
     document.getElementById('loginModal').addEventListener('shown.bs.modal', () => openLoginModal());
     document.getElementById('loginModal').addEventListener('hidden.bs.modal', () => clearLoginInputs());
     document.getElementById('loginDiscardButton').addEventListener('click', () => clearLoginInputs());
     document.getElementById('loginSubmitButton').addEventListener('click', () => login());
 
+    document.getElementById('manageAdminButton').addEventListener('click', async () => {
+        if (localStorage.getItem('token')) {
+            const manageAdminModal = new bootstrap.Modal(document.getElementById('manageAdminModal'));
+            manageAdminModal.show();
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+            loginModal.hide();
+        }
+        else return alert('You must be logged in to manage users');
+        
+        const superuserList = document.getElementById('superuserList');
+        const newSuperuserEmail = document.getElementById('newSuperuserEmail');
+        const newSuperuserPassword = document.getElementById('newSuperuserPassword');
+        const addSuperuserButton = document.getElementById('addSuperuserButton');
+
+        try {
+            const response = await fetch('/getsuperusers');
+            const usersData = await response.json();
+
+            superuserList.innerHTML = '';
+            usersData.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.textContent = user.email;
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger';
+                deleteButton.textContent = 'Delete';
+                
+                deleteButton.addEventListener('click', async () => {
+                    if (confirm(`Are you sure you want to delete ${user.email}?`)) {
+                        try {
+                            const response = await fetch(`/deletesuperuser?email=${user.email}`, {
+                                method: 'DELETE'
+                            });
+                            if (response.ok) {
+                                alert('User deleted successfully');
+                                location.reload();
+                            } else {
+                                alert('Failed to delete user');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                });
+
+                li.appendChild(deleteButton);
+                superuserList.appendChild(li);
+            });
+
+\            addSuperuserButton.addEventListener('click', async () => {
+                const email = newSuperuserEmail.value;
+                const password = newSuperuserPassword.value;
+
+                const data = {
+                    email,
+                    password
+                };
+
+                try {
+                    const response = await fetch('/addsuperuser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        alert('User added successfully');
+                        location.reload();
+                    } else if (response.status === 409) alert('User already exists');
+                    else alert('Failed to add user');
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    });
     
 }
 
