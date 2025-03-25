@@ -37,6 +37,10 @@ function openUploadXLSXModal() {
                 dzMessage.textContent = "File added";
                 uploadXLSXDiscardButton.disabled = false;
                 uploadXLSXUploadButton.disabled = false;
+
+                const fileNameElement = file.previewElement.querySelector("[data-dz-name]");
+                if (fileNameElement) fileNameElement.textContent = file.name.length > 52 ? file.name.substring(0, 49) + '...' : file.name;
+
                 if (dropzone.files.length > 1) dropzone.removeFile(dropzone.files[0]);
             });
             this.on("dragenter", function (file) {

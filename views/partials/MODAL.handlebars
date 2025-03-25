@@ -135,8 +135,12 @@
                 <hr>
                 <h5>Add New Superuser</h5>
                 <div class="input-group">
-                    <input type="email" id="newSuperuserEmail" class="form-control" placeholder="Enter email" required>
-                    <input type="input" id="newSuperuserPassword" class="form-control" placeholder="Enter password" required>
+                    <input type="email" id="newSuperuserEmail" class="form-control" placeholder="Email" required>
+                    <input type="text" id="newSuperuserPassword" class="form-control" placeholder="Password" required>
+                    <select id="newSuperuserAccess" class="form-select">
+                        <option value="1" selected>Limited Access</option>
+                        <option value="0">Full Access</option>
+                    </select>
                     <button class="btn btn-success" id="addSuperuserButton">Add</button>
                 </div>
             </div>

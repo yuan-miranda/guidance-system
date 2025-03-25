@@ -112,7 +112,7 @@ app.post('/login', async (req, res) => {
     };
     fs.appendFileSync(logFile, JSON.stringify(logData) + '\n');
 
-    if (user) res.status(200).send("200 OK");
+    if (user) res.status(200).send(email);
     else res.status(401).send("401 Unauthorized");
 });
 
@@ -131,26 +131,34 @@ app.post('/changepasswd', async (req, res) => {
 });
 
 app.post('/addsuperuser', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, access, requesterEmail } = req.body;
 
     const usersData = getSuperusers();
     const user = usersData.find(u => u.email === email);
 
     if (user) return res.status(409).send("User already exists");
 
-    usersData.push({ email, password });
+    const accessLevel = access !== undefined ? parseInt(access) : 0;
+    const requester = usersData.find(u => u.email === requesterEmail);
+    if (!requester) return res.status(404).send("Requester not found");
+    if (accessLevel === 0 && requester.access > 0) return res.status(403).send("Cannot assign full-power access");
+
+    usersData.push({ email, password, access: accessLevel });
     fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
 
     res.status(200).send("200 OK");
 });
 
 app.delete('/deletesuperuser', async (req, res) => {
-    const { email } = req.query;
+    const { email, requesterEmail } = req.body;
 
     const usersData = getSuperusers();
     const userIndex = usersData.findIndex(u => u.email === email);
+    const requester = usersData.find(u => u.email === requesterEmail);
 
     if (userIndex === -1) return res.status(404).send("User not found");
+    const user = usersData[userIndex];
+    if (user.access === 0 && requester.access > 0) return res.status(403).send("Cannot delete full-power access user");
 
     usersData.splice(userIndex, 1);
     fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
@@ -161,6 +169,60 @@ app.delete('/deletesuperuser', async (req, res) => {
 app.get('/getsuperusers', async (req, res) => {
     const usersData = getSuperusers();
     res.json(usersData);
+});
+
+app.get('/getAccess', async (req, res) => {
+    const { email } = req.query;
+
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email);
+
+    if (!user) return res.status(404).send("User not found");
+
+    res.json({ access: user.access });
+});
+
+app.get('/getPassword', async (req, res) => {
+    const { email } = req.query;
+
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email);
+
+    if (!user) return res.status(404).send("User not found");
+
+    res.json({ password: user.password });
+});
+
+app.post('/makeaccess0', async (req, res) => {
+    const { email, requesterEmail } = req.body;
+
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email);
+    const requester = usersData.find(u => u.email === requesterEmail);
+
+    if (!user) return res.status(404).send("User not found");
+    if (!requester || requester.access > 0) return res.status(403).send("Access denied");
+
+    user.access = 0;
+    fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
+
+    res.status(200).send("200 OK");
+});
+
+app.post('/makeaccess1', async (req, res) => {
+    const { email, requesterEmail } = req.body;
+
+    const usersData = getSuperusers();
+    const user = usersData.find(u => u.email === email);
+    const requester = usersData.find(u => u.email === requesterEmail);
+
+    if (!user) return res.status(404).send("User not found");
+    if (!requester || requester.access > 0) return res.status(403).send("Access denied");
+
+    user.access = 1;
+    fs.writeFileSync(superusersFile, JSON.stringify({ superusers: usersData }));
+
+    res.status(200).send("200 OK");
 });
 
 app.post('/savechanges', async (req, res) => {

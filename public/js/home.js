@@ -530,7 +530,7 @@ function searchEventListener() {
 }
 
 function isLoggedIn() {
-    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
     const tableContainer = document.querySelector('.table-container');
     const fileDropdown = document.getElementById('fileDropdown');
     const addRowButton = document.getElementById('addRowButton');
@@ -541,7 +541,7 @@ function isLoggedIn() {
     const generateQRLink = document.querySelector('a[data-bs-target="#generateQRModal"]');
     const qrCodeScanIcon = document.querySelector('.qr-code-scan-icon');
 
-    if (!token) {
+    if (!email) {
         tableContainer.classList.add('blurred');
         fileDropdown.classList.add('blurred');
         addRowButton.disabled = true;
